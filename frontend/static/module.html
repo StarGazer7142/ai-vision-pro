@@ -1,0 +1,1431 @@
+﻿<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>场景监控详情 - AI-VISION PRO 商业版</title>
+  <link rel="preconnect" href="https://fonts.googleapis.com" />
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+  <link href="https://fonts.googleapis.com/css2?family=Noto+Sans+SC:wght@400;500;700&display=swap" rel="stylesheet" media="print" onload="this.media='all'" />
+  <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css" rel="stylesheet">
+  
+  <style>
+    /* ================= 商业级设计规范 ================= */
+    :root {
+      --bg-base: #020617;        
+      --panel-bg: rgba(15, 23, 42, 0.75);
+      --panel-border: rgba(56, 189, 248, 0.15);
+      --text-main: #f8fafc;
+      --text-sub: #94a3b8;
+      --brand: #0ea5e9;
+      --brand-glow: rgba(14, 165, 233, 0.35);
+      --warn: #fbbf24;
+      --danger: #f43f5e;
+      --ok: #10b981;
+    }
+
+    * { box-sizing: border-box; font-family: "Noto Sans SC", sans-serif; margin: 0; padding: 0; }
+    
+    body {
+      min-height: 100vh; color: var(--text-main); padding: 24px;
+      background: radial-gradient(circle at 50% 0%, rgba(14, 165, 233, 0.08), transparent 50%), var(--bg-base);
+    }
+
+    .container { max-width: 1400px; margin: 0 auto; display: grid; gap: 20px; }
+
+    /* --- 1. 顶部全局导航栏 --- */
+    .topbar {
+      display: flex; justify-content: space-between; align-items: center; padding: 16px 24px;
+      background: var(--panel-bg); border: 1px solid var(--panel-border); 
+      border-radius: 12px; backdrop-filter: blur(10px);
+      box-shadow: 0 4px 20px rgba(0,0,0,0.2);
+    }
+    .title-wrap h1 { font-size: 22px; font-weight: 700; display: flex; align-items: center; gap: 10px; }
+    .title-wrap p { color: var(--text-sub); font-size: 13px; margin-top: 4px; }
+    .status-badge { 
+      display: flex; align-items: center; gap: 6px; padding: 6px 14px; 
+      border-radius: 999px; font-size: 13px; font-weight: 600;
+      background: rgba(16, 185, 129, 0.1); color: var(--ok); border: 1px solid rgba(16, 185, 129, 0.2);
+    }
+    .status-dot { width: 8px; height: 8px; border-radius: 50%; background: var(--ok); box-shadow: 0 0 8px var(--ok); }
+    .back-btn { 
+      padding: 8px 18px; border-radius: 8px; font-size: 14px; text-decoration: none; 
+      background: rgba(255,255,255,0.05); color: var(--text-main); border: 1px solid rgba(255,255,255,0.1); 
+      transition: all 0.2s; display: flex; align-items: center; gap: 8px;
+    }
+    .back-btn:hover { background: rgba(255,255,255,0.1); border-color: rgba(255,255,255,0.2); }
+    .engine-switch-card {
+      display: flex; align-items: center; gap: 14px; padding: 10px 14px;
+      border-radius: 14px; border: 1px solid rgba(56, 189, 248, 0.18); background: rgba(14, 165, 233, 0.08);
+      min-width: 300px;
+    }
+    .engine-switch-card.disabled { opacity: 0.72; }
+    .engine-switch-copy { display: flex; flex-direction: column; gap: 4px; min-width: 0; }
+    .engine-switch-copy strong { font-size: 13px; color: var(--text-main); white-space: nowrap; }
+    .engine-switch-copy span { font-size: 11px; color: var(--text-sub); white-space: nowrap; overflow: hidden; text-overflow: ellipsis; max-width: 180px; }
+    .engine-switch-btn {
+      position: relative; width: 124px; height: 42px; border-radius: 999px; background: rgba(2, 6, 23, 0.92);
+      border: 1px solid rgba(56, 189, 248, 0.22); cursor: pointer; overflow: hidden; flex-shrink: 0;
+    }
+    .engine-switch-btn::before {
+      content: ''; position: absolute; top: 4px; left: 4px; width: 56px; height: 30px; border-radius: 999px;
+      background: linear-gradient(135deg, #0ea5e9, #22c55e); transition: transform 0.22s ease;
+      box-shadow: 0 8px 18px rgba(14, 165, 233, 0.28);
+    }
+    .engine-switch-btn.vlm::before { transform: translateX(60px); }
+    .engine-switch-btn.disabled { cursor: not-allowed; }
+    .engine-switch-labels {
+      position: absolute; inset: 0; display: flex; align-items: center; justify-content: space-between;
+      padding: 0 14px; font-size: 12px; font-weight: 700; letter-spacing: 0.04em; pointer-events: none;
+    }
+    .engine-switch-labels .left { color: white; }
+    .engine-switch-labels .right { color: var(--text-sub); }
+    .engine-switch-btn.vlm .engine-switch-labels .left { color: var(--text-sub); }
+    .engine-switch-btn.vlm .engine-switch-labels .right { color: white; }
+
+    /* --- 2. 商业化卡片面板 --- */
+    .panel { 
+      background: var(--panel-bg); border: 1px solid var(--panel-border); 
+      border-radius: 16px; padding: 24px; backdrop-filter: blur(10px);
+      box-shadow: 0 8px 32px rgba(0,0,0,0.2);
+    }
+    .panel-header { display: flex; justify-content: space-between; align-items: center; margin-bottom: 20px; }
+    .panel-title { font-size: 16px; font-weight: 600; display: flex; align-items: center; gap: 8px; color: var(--brand); }
+
+    /* --- 3. 高级分段式控制器 (Segmented Tabs) --- */
+    .controls-row { display: flex; justify-content: space-between; align-items: center; margin-bottom: 16px; flex-wrap: wrap; gap: 16px; }
+    .segmented-control {
+      display: inline-flex; background: rgba(0,0,0,0.4); border-radius: 10px; padding: 4px;
+      border: 1px solid rgba(255,255,255,0.05);
+    }
+    .seg-btn {
+      background: transparent; border: none; color: var(--text-sub); padding: 8px 20px; 
+      border-radius: 8px; font-size: 14px; font-weight: 500; cursor: pointer; transition: all 0.3s;
+    }
+    .seg-btn:hover { color: var(--text-main); }
+    .seg-btn.active { background: var(--brand); color: #fff; box-shadow: 0 2px 10px var(--brand-glow); }
+    
+    .action-btn {
+      background: transparent; border: 1px solid var(--brand); color: var(--brand);
+      padding: 8px 20px; border-radius: 8px; font-size: 14px; font-weight: 600; cursor: pointer; transition: 0.2s;
+      display: flex; align-items: center; gap: 6px;
+    }
+    .action-btn:hover { background: rgba(14, 165, 233, 0.1); box-shadow: 0 0 15px var(--brand-glow); }
+    .action-btn.recording {
+      border-color: rgba(244, 63, 94, 0.5);
+      color: #fecdd3;
+      background: rgba(244, 63, 94, 0.14);
+      box-shadow: 0 0 18px rgba(244, 63, 94, 0.18);
+    }
+    .utility-status {
+      font-size: 12px;
+      color: var(--text-sub);
+      min-width: 120px;
+      text-align: right;
+    }
+
+    /* --- 4. HUD 科技感视频框 --- */
+    .stream-frame { 
+      width: 100%; aspect-ratio: 16 / 9; border-radius: 12px; border: 1px solid rgba(14, 165, 233, 0.3); 
+      position: relative; background: #000; overflow: hidden; box-shadow: inset 0 0 40px rgba(0,0,0,0.8);
+    }
+    /* 装饰性四角游标 */
+    .stream-frame::before, .stream-frame::after {
+      content: ''; position: absolute; width: 30px; height: 30px; border: 2px solid var(--brand); z-index: 10; pointer-events: none;
+    }
+    .stream-frame::before { top: 10px; left: 10px; border-right: none; border-bottom: none; }
+    .stream-frame::after { bottom: 10px; right: 10px; border-left: none; border-top: none; }
+    
+    .stream-frame img { width: 100%; height: 100%; object-fit: contain; }
+    .stream-tip { 
+      position: absolute; left: 20px; bottom: 20px; padding: 6px 14px; 
+      background: rgba(2, 6, 23, 0.85); border-radius: 6px; font-size: 12px; color: var(--brand); 
+      border: 1px solid rgba(14, 165, 233, 0.2); backdrop-filter: blur(4px); font-family: monospace;
+    }
+    .record-badge {
+      position: absolute; top: 18px; right: 18px; display: none; align-items: center; gap: 10px;
+      padding: 8px 14px; border-radius: 999px; background: rgba(69, 10, 24, 0.82);
+      border: 1px solid rgba(244, 63, 94, 0.35); color: #ffe4e6; font-size: 12px; font-weight: 700;
+      z-index: 11; box-shadow: 0 12px 28px rgba(15, 23, 42, 0.35);
+    }
+    .record-badge.active { display: inline-flex; }
+    .record-dot {
+      width: 10px; height: 10px; border-radius: 50%; background: #f43f5e;
+      box-shadow: 0 0 14px rgba(244, 63, 94, 0.75);
+      animation: recordBlink 1s infinite;
+    }
+    @keyframes recordBlink {
+      0%, 100% { opacity: 1; transform: scale(1); }
+      50% { opacity: 0.45; transform: scale(0.85); }
+    }
+
+    /* --- 5. 编辑器工具栏 (悬浮风格) --- */
+    #edit-region-toolbar { 
+      display: none; background: rgba(15, 23, 42, 0.9); padding: 12px 20px; border-radius: 10px; 
+      margin-bottom: 16px; border: 1px solid var(--warn); align-items: center; justify-content: space-between;
+      box-shadow: 0 4px 20px rgba(0,0,0,0.3);
+    }
+    .edit-input { background: #000; color: #fff; border: 1px solid var(--panel-border); padding: 8px; border-radius: 6px; outline: none; }
+    .edit-stack { display: flex; gap: 12px; align-items: center; flex-wrap: wrap; }
+    .edit-chip { padding: 6px 10px; border-radius: 999px; border: 1px solid rgba(255,255,255,0.08); background: rgba(255,255,255,0.04); color: var(--text-sub); font-size: 12px; }
+    #dwell-threshold-panel {
+      display: none; align-items: center; justify-content: space-between; gap: 16px; flex-wrap: wrap;
+      margin-bottom: 16px; padding: 12px 16px; border-radius: 10px;
+      border: 1px solid rgba(16, 185, 129, 0.35); background: rgba(6, 78, 59, 0.22);
+      box-shadow: 0 4px 20px rgba(0,0,0,0.22);
+    }
+    .threshold-input {
+      width: 92px; background: #020617; color: #fff; border: 1px solid rgba(16, 185, 129, 0.35);
+      padding: 8px 10px; border-radius: 6px; outline: none; font-weight: 700;
+    }
+    .threshold-note { color: var(--text-sub); font-size: 12px; min-width: 180px; }
+
+    /* --- 6. 数据信号与事件列表 --- */
+    .data-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 20px; }
+    .signal-grid { display: grid; grid-template-columns: repeat(auto-fit, minmax(160px, 1fr)); gap: 16px; }
+    .signal-item { 
+      background: rgba(0,0,0,0.3); padding: 16px; border-radius: 10px; 
+      border: 1px solid var(--panel-border); text-align: center; transition: 0.3s;
+    }
+    .signal-item:hover { border-color: rgba(255,255,255,0.2); transform: translateY(-2px); }
+    .signal-item .label { font-size: 13px; color: var(--text-sub); margin-bottom: 8px; }
+    .signal-item .value { font-size: 24px; font-weight: 700; font-family: monospace; }
+    .value.true { color: var(--ok); text-shadow: 0 0 10px rgba(16,185,129,0.4); }
+
+    .events-viewport { height: 220px; overflow-y: auto; border: 1px solid var(--panel-border); border-radius: 10px; background: rgba(0,0,0,0.2); }
+    .events-viewport::-webkit-scrollbar { width: 4px; }
+    .events-viewport::-webkit-scrollbar-thumb { background: rgba(255,255,255,0.2); }
+    .event-item { 
+      list-style: none; padding: 12px 16px; border-bottom: 1px solid rgba(255,255,255,0.03); 
+      font-size: 13px; display: flex; gap: 12px;
+    }
+    .event-item:hover { background: rgba(255,255,255,0.02); }
+    @keyframes spin { to { transform: rotate(360deg); } }
+  </style>
+</head>
+<body>
+  <div class="container">
+    <header class="topbar">
+      <div class="title-wrap">
+        <h1 id="scene-name"><i class="fa-solid fa-server" style="color: var(--brand);"></i> 场景加载中...</h1>
+        <p id="scene-desc">实时 AI 推理引擎初始化中</p>
+      </div>
+      <div style="display: flex; gap: 16px; align-items: center;">
+        <div id="module-engine-switch-card" class="engine-switch-card">
+          <div class="engine-switch-copy">
+            <strong>双引擎切换（YOLO / VLM）</strong>
+            <span id="module-engine-switch-note">当前摄像头方案：检测中...</span>
+          </div>
+          <button id="module-engine-switch-btn" class="engine-switch-btn" type="button">
+            <div class="engine-switch-labels">
+              <span class="left">YOLO</span>
+              <span class="right">VLM</span>
+            </div>
+          </button>
+        </div>
+        <button id="dwell-threshold-top-btn" class="action-btn" type="button"><i class="fa-solid fa-stopwatch"></i> 滞留阈值</button>
+        <a class="back-btn" href="index.html"><i class="fa-solid fa-arrow-left"></i> 返回总屏</a>
+      </div>
+    </header>
+
+    <section class="panel">
+      <div class="controls-row">
+        <div class="segmented-control" id="camera-tabs">
+            </div>
+
+        <div style="display: flex; gap: 12px; align-items: center;">
+            <div class="segmented-control">
+                <button id="preview-person-btn" class="seg-btn active"><i class="fa-solid fa-person"></i> 主体模式</button>
+                <button id="preview-all-btn" class="seg-btn"><i class="fa-solid fa-border-all"></i> 全目标模式</button>
+            </div>
+            <button id="capture-image-btn" class="action-btn"><i class="fa-solid fa-camera"></i> 截图</button>
+            <button id="capture-video-btn" class="action-btn"><i class="fa-solid fa-record-vinyl"></i> 开始录屏</button>
+            <button id="dwell-threshold-btn" class="action-btn"><i class="fa-solid fa-stopwatch"></i> 滞留阈值</button>
+            <button id="toggle-edit-btn" class="action-btn"><i class="fa-solid fa-pen-ruler"></i> 开启区域编辑</button>
+            <div id="capture-status" class="utility-status">本地截图与录屏待命</div>
+        </div>
+      </div>
+
+      <div id="dwell-threshold-panel">
+         <div class="edit-stack">
+              <span style="font-size: 13px; color: var(--text-main);"><i class="fa-solid fa-stopwatch"></i> 滞留判定:</span>
+              <select id="dwell-threshold-zone" class="edit-input"></select>
+              <input id="dwell-threshold-input" class="threshold-input" type="number" min="1" max="3600" step="1" value="5" />
+              <span class="threshold-note" id="dwell-threshold-note">达到阈值后触发滞留告警</span>
+         </div>
+         <div style="display:flex; gap: 12px;">
+             <button id="save-dwell-threshold-btn" class="seg-btn active" style="background: var(--ok); color: #000;"><i class="fa-solid fa-check"></i> 保存阈值</button>
+             <button id="cancel-dwell-threshold-btn" class="seg-btn" style="border: 1px solid var(--panel-border);"><i class="fa-solid fa-xmark"></i> 收起</button>
+         </div>
+      </div>
+
+      <div id="edit-region-toolbar">
+         <div class="edit-stack">
+              <span style="font-size: 13px; color: var(--text-sub);"><i class="fa-solid fa-layer-group"></i> 目标防区:</span>
+              <select id="region-select" class="edit-input"></select>
+              <div id="roi-draw-mode-wrap" class="edit-stack" style="display:none;">
+                  <span style="font-size: 13px; color: var(--text-sub);"><i class="fa-solid fa-route"></i> 绘制方式:</span>
+                  <select id="roi-draw-mode" class="edit-input">
+                      <option value="line">直线警戒线</option>
+                      <option value="trajectory">轨迹通道</option>
+                  </select>
+              </div>
+              <div id="roi-path-width-wrap" class="edit-stack" style="display:none;">
+                  <span style="font-size: 13px; color: var(--text-sub);"><i class="fa-solid fa-ruler-combined"></i> 通道宽度:</span>
+                  <input id="roi-path-width" class="edit-input" type="range" min="0.02" max="0.20" step="0.01" value="0.08" />
+                  <span id="roi-path-width-value" class="edit-chip">0.08</span>
+              </div>
+              <button id="start-draw-btn" class="seg-btn" style="color: var(--warn); border: 1px solid var(--warn); padding: 6px 14px;"><i class="fa-solid fa-paintbrush"></i> 重绘</button>
+              <button id="undo-draw-btn" class="seg-btn" style="border: 1px solid var(--panel-border); padding: 6px 14px;"><i class="fa-solid fa-rotate-left"></i> 撤销</button>
+          </div>
+         <div style="display:flex; gap: 12px;">
+             <button id="delete-region-btn" class="seg-btn" style="border: 1px solid rgba(244, 63, 94, 0.45); color: #fda4af;"><i class="fa-solid fa-trash-can"></i> 删除已划线</button>
+             <button id="save-region-btn" class="seg-btn active" style="background: var(--ok); color: #000;"><i class="fa-solid fa-check"></i> 保存并下发</button>
+             <button id="cancel-region-btn" class="seg-btn" style="border: 1px solid var(--panel-border);"><i class="fa-solid fa-xmark"></i> 取消</button>
+         </div>
+      </div>
+
+      <div class="stream-frame" style="position:relative;">
+        <div id="stream-skeleton" style="position:absolute;inset:0;display:flex;flex-direction:column;align-items:center;justify-content:center;background:rgba(2,6,23,.85);border-radius:12px;z-index:5;transition:opacity .4s;">
+          <div style="width:48px;height:48px;border:3px solid rgba(56,189,248,.2);border-top-color:#0ea5e9;border-radius:50%;animation:spin .8s linear infinite;"></div>
+          <p style="margin-top:14px;color:var(--text-sub);font-size:13px;">视频流加载中...</p>
+        </div>
+        <img id="stream-img" src="" alt="视频流" crossorigin="anonymous" style="opacity:0;transition:opacity .4s;" onload="this.style.opacity=1; document.getElementById('stream-skeleton').style.opacity=0; setTimeout(()=>document.getElementById('stream-skeleton').style.display='none', 400);" />
+        <canvas id="draw-canvas" style="position:absolute; top:0; left:0; width:100%; height:100%; cursor:crosshair; display:none;"></canvas>
+        <canvas id="capture-canvas" style="display:none;"></canvas>
+        <div id="record-badge" class="record-badge">
+          <span class="record-dot"></span>
+          <span>REC</span>
+          <span id="record-timer">00:00</span>
+        </div>
+        <div id="stream-tip" class="stream-tip"><i class="fa-solid fa-shield-halved"></i> 正在建立加密视频隧道...</div>
+      </div>
+    </section>
+    
+    <div class="data-grid">
+        <section class="panel" style="padding: 20px;">
+            <div class="panel-header">
+                <span class="panel-title"><i class="fa-solid fa-satellite-dish"></i> 引擎实时信号</span>
+            </div>
+            <div id="signal-grid" class="signal-grid">
+                <div style="grid-column:1/-1;padding:30px;text-align:center;color:var(--text-sub);">
+                    <div style="width:28px;height:28px;border:2px solid rgba(56,189,248,.2);border-top-color:var(--brand);border-radius:50%;animation:spin .8s linear infinite;margin:0 auto 10px;"></div>
+                    等待引擎信号...
+                </div>
+            </div>
+        </section>
+
+        <section class="panel" style="padding: 20px;">
+            <div class="panel-header">
+                <span class="panel-title"><i class="fa-solid fa-clipboard-list"></i> 结构化事件清单</span>
+            </div>
+            <div class="events-viewport">
+                <ul id="events-list" style="padding:0; margin:0;">
+                    <li style="padding:30px;text-align:center;color:var(--text-sub);list-style:none;">
+                        <div style="width:28px;height:28px;border:2px solid rgba(56,189,248,.2);border-top-color:var(--brand);border-radius:50%;animation:spin .8s linear infinite;margin:0 auto 10px;"></div>
+                        等待事件推送...
+                    </li>
+                </ul>
+            </div>
+        </section>
+    </div>
+  </div>
+
+  <script>
+    // ================= 1. 基础配置与 URL 解析 =================
+    const API_BASE = window.location.port === "8000" ? "" : window.location.protocol + "//" + window.location.hostname + ":8000";
+    const params = new URLSearchParams(window.location.search);
+    const sceneId = params.get("scene") || "campus_fence";
+    let currentCameraId = params.get("camera") || "cam_fence"; 
+    let previewMode = "person";
+    let globalCameras = [];
+    let sceneMeta = null;
+    let sceneCameras = [];
+    let visionBackendStatus = null;
+    const AUTH_TOKEN_KEY = "vision_pro_admin_token";
+
+    function getStoredAuthToken() {
+        return localStorage.getItem(AUTH_TOKEN_KEY) || "";
+    }
+
+    function getAuthHeaders(extraHeaders = {}) {
+        const headers = { ...extraHeaders };
+        const token = getStoredAuthToken();
+        if (token) {
+            headers.Authorization = `Bearer ${token}`;
+        }
+        return headers;
+    }
+
+    async function authorizedFetch(url, options = {}) {
+        return fetch(url, { ...options, headers: getAuthHeaders(options.headers || {}) });
+    }
+
+    function showModuleNotice(message, kind = "success") {
+        showModuleSwitchToast(message, kind);
+    }
+
+    function showModuleConfirm(message, title = "确认操作") {
+        return new Promise((resolve) => {
+            let modal = document.getElementById("module-confirm-modal");
+            if (!modal) {
+                modal = document.createElement("div");
+                modal.id = "module-confirm-modal";
+                modal.style.cssText = "position:fixed;inset:0;background:rgba(2,6,23,.72);backdrop-filter:blur(6px);z-index:9999;display:none;align-items:center;justify-content:center;padding:18px;";
+                modal.innerHTML = `
+                    <div style="width:min(420px,100%);background:var(--panel-bg);border:1px solid var(--panel-border);border-radius:12px;padding:22px;box-shadow:0 20px 60px rgba(0,0,0,.35);">
+                        <h3 id="module-confirm-title" style="margin-bottom:10px;">确认操作</h3>
+                        <div id="module-confirm-message" style="color:var(--text-sub);line-height:1.7;"></div>
+                        <div style="display:flex;justify-content:flex-end;gap:10px;margin-top:18px;">
+                            <button id="module-confirm-cancel" class="action-btn">取消</button>
+                            <button id="module-confirm-ok" class="action-btn danger-btn">确认</button>
+                        </div>
+                    </div>`;
+                document.body.appendChild(modal);
+            }
+            modal.querySelector("#module-confirm-title").textContent = title;
+            modal.querySelector("#module-confirm-message").textContent = message;
+            modal.style.display = "flex";
+            const okBtn = modal.querySelector("#module-confirm-ok");
+            const cancelBtn = modal.querySelector("#module-confirm-cancel");
+            const done = (value) => {
+                modal.style.display = "none";
+                okBtn.onclick = null;
+                cancelBtn.onclick = null;
+                resolve(value);
+            };
+            okBtn.onclick = () => done(true);
+            cancelBtn.onclick = () => done(false);
+            modal.onclick = (event) => {
+                if (event.target === modal) done(false);
+            };
+        });
+    }
+
+    function ensureAdminAccess(message = "请先返回总屏登录管理员账号，再进行区域编辑。") {
+        if (getStoredAuthToken()) return true;
+        showModuleNotice(message, "error");
+        return false;
+    }
+
+    function parseBackendDateTime(value = "") {
+        const raw = String(value || "").trim();
+        if (!raw) return null;
+        const normalized = /^\d{4}-\d{2}-\d{2}T\d{2}:\d{2}:\d{2}(?:\.\d+)?$/.test(raw)
+            ? `${raw}Z`
+            : raw;
+        const parsed = new Date(normalized);
+        return Number.isNaN(parsed.getTime()) ? null : parsed;
+    }
+
+    function formatClockTime(value = "", fallback = "--:--:--") {
+        const parsed = parseBackendDateTime(value);
+        if (!parsed) return fallback;
+        return parsed.toLocaleTimeString("zh-CN", { hour12: false });
+    }
+
+    const streamImgEl = document.getElementById("stream-img");
+    const streamTipEl = document.getElementById("stream-tip");
+    const captureCanvasEl = document.getElementById("capture-canvas");
+    const captureCanvasCtx = captureCanvasEl.getContext("2d");
+    const recordBadgeEl = document.getElementById("record-badge");
+    const recordTimerEl = document.getElementById("record-timer");
+    const cameraTabsEl = document.getElementById("camera-tabs");
+    const sceneNameEl = document.getElementById("scene-name");
+    const moduleEngineSwitchCardEl = document.getElementById("module-engine-switch-card");
+    const moduleEngineSwitchBtnEl = document.getElementById("module-engine-switch-btn");
+    const moduleEngineSwitchNoteEl = document.getElementById("module-engine-switch-note");
+    const captureImageBtnEl = document.getElementById("capture-image-btn");
+    const captureVideoBtnEl = document.getElementById("capture-video-btn");
+    const captureStatusEl = document.getElementById("capture-status");
+    const dwellThresholdBtnEl = document.getElementById("dwell-threshold-btn");
+    const dwellThresholdTopBtnEl = document.getElementById("dwell-threshold-top-btn");
+    const dwellThresholdPanelEl = document.getElementById("dwell-threshold-panel");
+    const dwellThresholdZoneEl = document.getElementById("dwell-threshold-zone");
+    const dwellThresholdInputEl = document.getElementById("dwell-threshold-input");
+    const dwellThresholdNoteEl = document.getElementById("dwell-threshold-note");
+    const saveDwellThresholdBtnEl = document.getElementById("save-dwell-threshold-btn");
+    const cancelDwellThresholdBtnEl = document.getElementById("cancel-dwell-threshold-btn");
+
+    let captureNoticeTimer = 0;
+    let screenRecorder = null;
+    let screenRecordingStream = null;
+    let screenRecordingChunks = [];
+    let screenRecordingMimeType = "";
+    let screenRecordingLoopId = 0;
+    let screenRecordingActive = false;
+    let screenRecordingStartedAt = 0;
+    let screenRecordingTimerId = 0;
+
+    function formatRecordingDuration(totalSeconds = 0) {
+        const safe = Math.max(0, Math.floor(totalSeconds));
+        const minutes = Math.floor(safe / 60).toString().padStart(2, "0");
+        const seconds = (safe % 60).toString().padStart(2, "0");
+        return `${minutes}:${seconds}`;
+    }
+
+    function formatCaptureWatermarkTimestamp() {
+        const now = new Date();
+        return now.toLocaleString("zh-CN", {
+            year: "numeric",
+            month: "2-digit",
+            day: "2-digit",
+            hour: "2-digit",
+            minute: "2-digit",
+            second: "2-digit",
+            hour12: false,
+        }).replace(/\//g, "-");
+    }
+
+    function drawCaptureOverlay(width, height) {
+        const watermarkText = `${currentCameraId} | ${formatCaptureWatermarkTimestamp()}`;
+        captureCanvasCtx.save();
+        captureCanvasCtx.font = `${Math.max(16, Math.round(width * 0.018))}px "Noto Sans SC", sans-serif`;
+        captureCanvasCtx.textBaseline = "middle";
+
+        const watermarkMetrics = captureCanvasCtx.measureText(watermarkText);
+        const watermarkPaddingX = 14;
+        const watermarkPaddingY = 10;
+        const watermarkBoxWidth = watermarkMetrics.width + watermarkPaddingX * 2;
+        const watermarkBoxHeight = 34;
+        const watermarkX = width - watermarkBoxWidth - 18;
+        const watermarkY = height - watermarkBoxHeight - 18;
+
+        captureCanvasCtx.fillStyle = "rgba(2, 6, 23, 0.72)";
+        captureCanvasCtx.strokeStyle = "rgba(56, 189, 248, 0.42)";
+        captureCanvasCtx.lineWidth = 1;
+        captureCanvasCtx.beginPath();
+        captureCanvasCtx.roundRect(watermarkX, watermarkY, watermarkBoxWidth, watermarkBoxHeight, 10);
+        captureCanvasCtx.fill();
+        captureCanvasCtx.stroke();
+        captureCanvasCtx.fillStyle = "#e0f2fe";
+        captureCanvasCtx.fillText(watermarkText, watermarkX + watermarkPaddingX, watermarkY + watermarkBoxHeight / 2);
+
+        if (screenRecordingActive) {
+            const elapsedSeconds = (Date.now() - screenRecordingStartedAt) / 1000;
+            const recText = `REC ${formatRecordingDuration(elapsedSeconds)}`;
+            const recMetrics = captureCanvasCtx.measureText(recText);
+            const recBoxWidth = recMetrics.width + 42;
+            const recBoxHeight = 34;
+            const recX = 18;
+            const recY = 18;
+
+            captureCanvasCtx.fillStyle = "rgba(69, 10, 24, 0.82)";
+            captureCanvasCtx.strokeStyle = "rgba(244, 63, 94, 0.42)";
+            captureCanvasCtx.beginPath();
+            captureCanvasCtx.roundRect(recX, recY, recBoxWidth, recBoxHeight, 999);
+            captureCanvasCtx.fill();
+            captureCanvasCtx.stroke();
+
+            captureCanvasCtx.fillStyle = "#f43f5e";
+            captureCanvasCtx.beginPath();
+            captureCanvasCtx.arc(recX + 16, recY + recBoxHeight / 2, 5, 0, Math.PI * 2);
+            captureCanvasCtx.fill();
+
+            captureCanvasCtx.fillStyle = "#ffe4e6";
+            captureCanvasCtx.fillText(recText, recX + 28, recY + recBoxHeight / 2);
+        }
+
+        captureCanvasCtx.restore();
+    }
+
+    function startRecordingTimer() {
+        stopRecordingTimer();
+        screenRecordingStartedAt = Date.now();
+        const updateTimer = () => {
+            if (!screenRecordingActive) return;
+            const elapsedSeconds = (Date.now() - screenRecordingStartedAt) / 1000;
+            recordTimerEl.textContent = formatRecordingDuration(elapsedSeconds);
+        };
+        updateTimer();
+        screenRecordingTimerId = window.setInterval(updateTimer, 250);
+    }
+
+    function stopRecordingTimer() {
+        if (screenRecordingTimerId) {
+            clearInterval(screenRecordingTimerId);
+            screenRecordingTimerId = 0;
+        }
+        recordTimerEl.textContent = "00:00";
+    }
+
+    function setCaptureStatus(message = "本地截图与录屏待命", tone = "normal") {
+        captureStatusEl.textContent = message;
+        captureStatusEl.style.color = tone === "error"
+            ? "var(--danger)"
+            : tone === "success"
+                ? "var(--ok)"
+                : "var(--text-sub)";
+    }
+
+    function showCaptureNotice(message, tone = "normal") {
+        clearTimeout(captureNoticeTimer);
+        setCaptureStatus(message, tone);
+        captureNoticeTimer = window.setTimeout(() => {
+            if (!screenRecordingActive) {
+                setCaptureStatus("本地截图与录屏待命", "normal");
+            }
+        }, 2200);
+    }
+
+    function captureFilename(prefix, extension) {
+        const stamp = new Date().toISOString().replace(/[:.]/g, "-");
+        return `${prefix}_${currentCameraId}_${stamp}.${extension}`;
+    }
+
+    function downloadBlob(blob, filename) {
+        const url = URL.createObjectURL(blob);
+        const anchor = document.createElement("a");
+        anchor.href = url;
+        anchor.download = filename;
+        document.body.appendChild(anchor);
+        anchor.click();
+        anchor.remove();
+        setTimeout(() => URL.revokeObjectURL(url), 1000);
+    }
+
+    function ensureCaptureCanvasSize() {
+        const width = streamImgEl.naturalWidth || streamImgEl.width || 1280;
+        const height = streamImgEl.naturalHeight || streamImgEl.height || 720;
+        if (captureCanvasEl.width !== width) captureCanvasEl.width = width;
+        if (captureCanvasEl.height !== height) captureCanvasEl.height = height;
+        return { width, height };
+    }
+
+    function drawCurrentStreamFrame() {
+        if (!streamImgEl.complete || !streamImgEl.naturalWidth || !streamImgEl.naturalHeight) {
+            return false;
+        }
+        try {
+            const { width, height } = ensureCaptureCanvasSize();
+            captureCanvasCtx.clearRect(0, 0, width, height);
+            captureCanvasCtx.drawImage(streamImgEl, 0, 0, width, height);
+            drawCaptureOverlay(width, height);
+            return true;
+        } catch (error) {
+            console.error("绘制监控帧失败", error);
+            return false;
+        }
+    }
+
+    async function captureSnapshot() {
+        if (!drawCurrentStreamFrame()) {
+            showCaptureNotice("当前视频流尚未就绪，暂时无法截图", "error");
+            return;
+        }
+        captureCanvasEl.toBlob((blob) => {
+            if (!blob) {
+                showCaptureNotice("截图生成失败，请稍后重试", "error");
+                return;
+            }
+            downloadBlob(blob, captureFilename("snapshot", "png"));
+            showCaptureNotice(`截图已保存（${currentCameraId}）`, "success");
+        }, "image/png");
+    }
+
+    function updateRecordingUi() {
+        if (screenRecordingActive) {
+            captureVideoBtnEl.classList.add("recording");
+            captureVideoBtnEl.innerHTML = `<i class="fa-solid fa-circle-stop"></i> 停止录屏`;
+            setCaptureStatus(`录屏中：${currentCameraId}`, "success");
+            recordBadgeEl.classList.add("active");
+        } else {
+            captureVideoBtnEl.classList.remove("recording");
+            captureVideoBtnEl.innerHTML = `<i class="fa-solid fa-record-vinyl"></i> 开始录屏`;
+            setCaptureStatus("本地截图与录屏待命", "normal");
+            recordBadgeEl.classList.remove("active");
+        }
+    }
+
+    function stopRecordingLoop() {
+        if (screenRecordingLoopId) {
+            cancelAnimationFrame(screenRecordingLoopId);
+            screenRecordingLoopId = 0;
+        }
+    }
+
+    function pumpRecordingFrame() {
+        if (!screenRecordingActive) return;
+        drawCurrentStreamFrame();
+        screenRecordingLoopId = requestAnimationFrame(pumpRecordingFrame);
+    }
+
+    async function startRecording() {
+        if (typeof MediaRecorder === "undefined") {
+            showCaptureNotice("当前浏览器不支持本地录屏导出", "error");
+            return;
+        }
+        if (!drawCurrentStreamFrame()) {
+            showCaptureNotice("当前视频流尚未就绪，请稍后再试", "error");
+            return;
+        }
+
+        const mimeCandidates = [
+            "video/webm;codecs=vp9",
+            "video/webm;codecs=vp8",
+            "video/webm"
+        ];
+        screenRecordingMimeType = mimeCandidates.find((item) => MediaRecorder.isTypeSupported(item)) || "";
+        screenRecordingStream = captureCanvasEl.captureStream(12);
+        screenRecordingChunks = [];
+        screenRecorder = screenRecordingMimeType
+            ? new MediaRecorder(screenRecordingStream, { mimeType: screenRecordingMimeType })
+            : new MediaRecorder(screenRecordingStream);
+
+        screenRecorder.ondataavailable = (event) => {
+            if (event.data && event.data.size > 0) {
+                screenRecordingChunks.push(event.data);
+            }
+        };
+        screenRecorder.onstop = () => {
+            stopRecordingLoop();
+            screenRecordingActive = false;
+            stopRecordingTimer();
+            updateRecordingUi();
+            if (screenRecordingStream) {
+                screenRecordingStream.getTracks().forEach((track) => track.stop());
+                screenRecordingStream = null;
+            }
+            if (!screenRecordingChunks.length) {
+                showCaptureNotice("录屏未生成可下载内容", "error");
+                return;
+            }
+            const blob = new Blob(screenRecordingChunks, { type: screenRecordingMimeType || "video/webm" });
+            downloadBlob(blob, captureFilename("screen_record", "webm"));
+            showCaptureNotice(`录屏已保存（${currentCameraId}）`, "success");
+            screenRecorder = null;
+            screenRecordingChunks = [];
+        };
+
+        screenRecordingActive = true;
+        startRecordingTimer();
+        updateRecordingUi();
+        pumpRecordingFrame();
+        screenRecorder.start(1000);
+    }
+
+    function stopRecording() {
+        if (!screenRecorder || !screenRecordingActive) return;
+        screenRecorder.stop();
+    }
+
+    async function toggleRecording() {
+        if (screenRecordingActive) {
+            stopRecording();
+            return;
+        }
+        await startRecording();
+    }
+
+    function getCurrentCameraConfig() {
+        return sceneCameras.find((camera) => camera.id === currentCameraId) || null;
+    }
+
+    function renderSceneHeader() {
+        const activeCamera = getCurrentCameraConfig();
+        const sceneLabel = sceneMeta?.name || sceneId;
+        const cameraLabel = activeCamera?.name || currentCameraId || "未选择摄像头";
+        sceneNameEl.innerHTML = `<i class="fa-solid fa-server" style="color: var(--brand);"></i> ${sceneLabel}`;
+        document.getElementById("scene-desc").textContent = `${cameraLabel} 正在执行实时 AI 感知与规则判定`;
+    }
+
+    function renderCameraTabs() {
+        cameraTabsEl.innerHTML = "";
+        sceneCameras.forEach((cam) => {
+            const btn = document.createElement("button");
+            btn.className = `seg-btn ${cam.id === currentCameraId ? "active" : ""}`;
+            btn.innerHTML = `<i class="fa-solid fa-camera-retro"></i> ${cam.name || cam.id}`;
+            btn.onclick = () => {
+                currentCameraId = cam.id;
+                updateStream();
+                renderSceneHeader();
+                fetchModuleVisionBackendStatus();
+                document.querySelectorAll("#camera-tabs .seg-btn").forEach((button) => button.classList.remove("active"));
+                btn.classList.add("active");
+                if (editState.active) loadRegionOptions();
+                if (dwellThresholdPanelEl.style.display === "flex") renderDwellThresholdPanel();
+            };
+            cameraTabsEl.appendChild(btn);
+        });
+    }
+
+    function getDwellZonesForCurrentCamera() {
+        const camera = getCurrentCameraConfig();
+        return Array.isArray(camera?.dwell_zones) ? camera.dwell_zones : [];
+    }
+
+    function renderDwellThresholdPanel() {
+        const zones = getDwellZonesForCurrentCamera();
+        dwellThresholdZoneEl.innerHTML = "";
+        if (!zones.length) {
+            dwellThresholdZoneEl.innerHTML = `<option value="">当前摄像头无滞留区</option>`;
+            dwellThresholdInputEl.value = "5";
+            dwellThresholdInputEl.disabled = true;
+            saveDwellThresholdBtnEl.disabled = true;
+            dwellThresholdNoteEl.textContent = "当前摄像头没有可配置的滞留规则";
+            return;
+        }
+
+        zones.forEach((zone) => {
+            const option = document.createElement("option");
+            option.value = zone.id || "";
+            option.textContent = zone.label || zone.id || "滞留区";
+            dwellThresholdZoneEl.appendChild(option);
+        });
+        dwellThresholdInputEl.disabled = false;
+        saveDwellThresholdBtnEl.disabled = false;
+        syncDwellThresholdInput();
+    }
+
+    function syncDwellThresholdInput() {
+        const zoneId = dwellThresholdZoneEl.value;
+        const zone = getDwellZonesForCurrentCamera().find((item) => String(item.id || "") === zoneId);
+        const threshold = Number(zone?.threshold_seconds || 5);
+        dwellThresholdInputEl.value = String(Math.max(1, Math.round(threshold)));
+        dwellThresholdNoteEl.textContent = `${zone?.label || zoneId || "滞留区"}：连续停留达到 ${dwellThresholdInputEl.value} 秒后触发滞留`;
+    }
+
+    async function saveDwellThreshold() {
+        if (!ensureAdminAccess("请先返回总屏登录管理员账号，再修改滞留阈值。")) return;
+        const zoneId = dwellThresholdZoneEl.value;
+        const threshold = Math.max(1, Math.min(3600, Math.round(Number(dwellThresholdInputEl.value || 0))));
+        if (!zoneId || !Number.isFinite(threshold)) {
+            showModuleNotice("请选择滞留区并填写有效秒数。", "error");
+            return;
+        }
+
+        saveDwellThresholdBtnEl.disabled = true;
+        try {
+            const res = await authorizedFetch(`${API_BASE}/api/config/camera/${encodeURIComponent(currentCameraId)}/dwell-threshold`, {
+                method: "POST",
+                headers: { "Content-Type": "application/json" },
+                body: JSON.stringify({ zone_id: zoneId, threshold_seconds: threshold }),
+            });
+            const result = await res.json().catch(() => ({}));
+            if (!res.ok) throw new Error(result.detail || result.message || "保存失败");
+            dwellThresholdNoteEl.textContent = `已保存：连续停留 ${threshold} 秒后判定滞留`;
+            await loadConfig();
+            renderDwellThresholdPanel();
+            updateStream();
+        } catch (error) {
+            showModuleNotice(`保存失败：${error.message || "未知错误"}`, "error");
+        } finally {
+            saveDwellThresholdBtnEl.disabled = false;
+        }
+    }
+
+    function toggleDwellThresholdPanel() {
+        if (!ensureAdminAccess("请先返回总屏登录管理员账号，再修改滞留阈值。")) return;
+        const visible = dwellThresholdPanelEl.style.display === "flex";
+        dwellThresholdPanelEl.style.display = visible ? "none" : "flex";
+        const background = visible ? "transparent" : "rgba(16, 185, 129, 0.16)";
+        dwellThresholdBtnEl.style.background = background;
+        dwellThresholdTopBtnEl.style.background = background;
+        if (!visible) renderDwellThresholdPanel();
+    }
+
+    function renderModuleVisionBackendSwitch(status) {
+        visionBackendStatus = status || null;
+        const effective = status?.effective_backend || status?.active_backend || "yolo";
+        moduleEngineSwitchBtnEl.classList.toggle("vlm", effective === "video_understanding");
+
+        const sceneRows = status?.scenes || [];
+        const cameraRows = status?.cameras || [];
+        const cameraInfo = cameraRows.find((item) => item.id === currentCameraId);
+        const sceneInfo = sceneRows.find((item) => item.id === sceneId);
+        let note = `当前生效方案：${status?.effective_backend_label || status?.active_backend_label || effective}`;
+        if (cameraInfo?.override_backend) {
+            note += " · 摄像头覆盖中";
+        } else if (sceneInfo?.override_backend) {
+            note += " · 场景覆盖中";
+        } else {
+            note += " · 全局默认";
+        }
+        moduleEngineSwitchNoteEl.textContent = note;
+
+        const disabled = !getStoredAuthToken() || !!status?.env_force_backend;
+        moduleEngineSwitchCardEl.classList.toggle("disabled", disabled);
+        moduleEngineSwitchBtnEl.classList.toggle("disabled", disabled);
+        moduleEngineSwitchBtnEl.disabled = disabled;
+    }
+
+    function renderModuleVisionBackendUnavailable(message = "当前摄像头方案：引擎离线") {
+        visionBackendStatus = null;
+        moduleEngineSwitchBtnEl.classList.remove("vlm");
+        moduleEngineSwitchCardEl.classList.add("disabled");
+        moduleEngineSwitchBtnEl.classList.add("disabled");
+        moduleEngineSwitchBtnEl.disabled = true;
+        moduleEngineSwitchNoteEl.textContent = message;
+    }
+
+    let moduleSwitchToastTimer = 0;
+    function showModuleSwitchToast(message, kind = "success") {
+        clearTimeout(moduleSwitchToastTimer);
+        moduleEngineSwitchNoteEl.textContent = message;
+        moduleEngineSwitchCardEl.style.borderColor = kind === "error"
+            ? "rgba(244, 63, 94, 0.35)"
+            : "rgba(56, 189, 248, 0.28)";
+        moduleSwitchToastTimer = window.setTimeout(() => {
+            if (visionBackendStatus) {
+                renderModuleVisionBackendSwitch(visionBackendStatus);
+            }
+        }, 2200);
+    }
+
+    async function fetchModuleVisionBackendStatus() {
+        try {
+            const url = new URL(`${API_BASE}/vision/backend/status`);
+            url.searchParams.set("scene_id", sceneId);
+            url.searchParams.set("camera_id", currentCameraId);
+            const res = await fetch(url.toString());
+            const data = await res.json().catch(() => ({}));
+            if (!res.ok) return;
+            renderModuleVisionBackendSwitch(data);
+        } catch (error) {
+            console.error("拉取双引擎状态失败", error);
+        }
+    }
+
+    async function toggleModuleVisionBackend() {
+        if (!getStoredAuthToken()) {
+            showModuleNotice("请先返回总屏登录管理员账号，再切换双引擎方案。", "error");
+            return;
+        }
+        if (visionBackendStatus?.env_force_backend) {
+            showModuleNotice(`当前 .env 中已写死 VISION_BACKEND_MODE=${visionBackendStatus.env_force_backend}，请先清空该字段，再使用顶部双引擎开关。`, "error");
+            return;
+        }
+        const nextBackend = visionBackendStatus?.effective_backend === "video_understanding" ? "yolo" : "video_understanding";
+        moduleEngineSwitchBtnEl.disabled = true;
+        try {
+            const latestStatusRes = await authorizedFetch(`${API_BASE}/vision/backend/status`);
+            const latestStatus = await latestStatusRes.json().catch(() => ({}));
+            if (!latestStatusRes.ok) throw new Error(latestStatus.detail || latestStatus.message || "获取当前双引擎配置失败");
+
+            const sceneOverrides = { ...(latestStatus.scene_overrides || {}) };
+            const cameraOverrides = { ...(latestStatus.camera_overrides || {}) };
+            cameraOverrides[currentCameraId] = nextBackend;
+
+            const activeVideo = latestStatus.available_backends?.video_understanding || {};
+            const res = await authorizedFetch(`${API_BASE}/vision/backend/config`, {
+                method: "POST",
+                headers: { "Content-Type": "application/json" },
+                body: JSON.stringify({
+                    default_backend: latestStatus.default_backend || latestStatus.active_backend || "yolo",
+                    scene_overrides: sceneOverrides,
+                    camera_overrides: cameraOverrides,
+                    video_understanding: {
+                        provider_mode: activeVideo.provider_mode || "mock_local",
+                        api_url: activeVideo.api_url || "",
+                        model: activeVideo.model || "",
+                        timeout_seconds: Number(activeVideo.timeout_seconds || 12),
+                        sample_stride: Number(activeVideo.sample_stride || 12),
+                    }
+                })
+            });
+            const result = await res.json().catch(() => ({}));
+            if (!res.ok) throw new Error(result.detail || result.message || "切换失败");
+            const effectiveStatusRes = await fetch(`${API_BASE}/vision/backend/status?scene_id=${encodeURIComponent(sceneId)}&camera_id=${encodeURIComponent(currentCameraId)}`);
+            const effectiveStatus = await effectiveStatusRes.json().catch(() => ({}));
+            if (!effectiveStatusRes.ok) throw new Error(effectiveStatus.detail || effectiveStatus.message || "切换后状态刷新失败");
+            renderModuleVisionBackendSwitch(effectiveStatus);
+            updateStream();
+            await poll();
+            window.setTimeout(() => { poll(); }, 1200);
+            showModuleSwitchToast(`✅ ${currentCameraId} 已切换到 ${nextBackend === "video_understanding" ? "VLM" : "YOLO"}`);
+        } catch (error) {
+            showModuleSwitchToast(`切换失败：${error.message || "未知错误"}`, "error");
+        }
+        finally {
+            moduleEngineSwitchBtnEl.disabled = false;
+        }
+    }
+
+    moduleEngineSwitchBtnEl.addEventListener("click", toggleModuleVisionBackend);
+    captureImageBtnEl.addEventListener("click", captureSnapshot);
+    captureVideoBtnEl.addEventListener("click", toggleRecording);
+    dwellThresholdBtnEl.addEventListener("click", toggleDwellThresholdPanel);
+    dwellThresholdTopBtnEl.addEventListener("click", toggleDwellThresholdPanel);
+    dwellThresholdZoneEl.addEventListener("change", syncDwellThresholdInput);
+    dwellThresholdInputEl.addEventListener("input", () => {
+        const seconds = Math.max(1, Math.min(3600, Math.round(Number(dwellThresholdInputEl.value || 1))));
+        dwellThresholdNoteEl.textContent = `连续停留达到 ${seconds} 秒后触发滞留`;
+    });
+    saveDwellThresholdBtnEl.addEventListener("click", saveDwellThreshold);
+    cancelDwellThresholdBtnEl.addEventListener("click", () => {
+        dwellThresholdPanelEl.style.display = "none";
+        dwellThresholdBtnEl.style.background = "transparent";
+        dwellThresholdTopBtnEl.style.background = "transparent";
+    });
+
+    // ================= 2. 核心视频流控制 =================
+    function updateStream() {
+        if (!currentCameraId) return;
+        const skeleton = document.getElementById("stream-skeleton");
+        if (skeleton) { skeleton.style.display = "flex"; skeleton.style.opacity = "1"; }
+        streamImgEl.style.opacity = "0";
+        streamImgEl.src = `${API_BASE}/stream/${encodeURIComponent(currentCameraId)}?preview=${encodeURIComponent(previewMode)}&t=${Date.now()}`;
+        streamTipEl.innerHTML = `<i class="fa-solid fa-video"></i> 接入通道: ${currentCameraId} &nbsp;|&nbsp; <i class="fa-solid fa-eye"></i> ${previewMode === "person" ? "主体追踪" : "全域扫描"}`;
+    }
+
+    // 延迟启动视频流和配置加载，让页面先渲染完成
+    setTimeout(() => {
+        updateStream();
+        loadConfig();
+        setInterval(poll, 3000);
+        poll();
+    }, 100);
+
+    document.getElementById("preview-person-btn").addEventListener("click", (e) => {
+        previewMode = "person"; updateStream();
+        e.target.classList.add("active"); document.getElementById("preview-all-btn").classList.remove("active");
+    });
+    document.getElementById("preview-all-btn").addEventListener("click", (e) => {
+        previewMode = "all"; updateStream();
+        e.target.classList.add("active"); document.getElementById("preview-person-btn").classList.remove("active");
+    });
+
+    // ================= 3. 系统配置同步 =================
+    async function loadConfig() {
+        try {
+            const [sceneRes, cameraRes] = await Promise.all([
+                fetch(`${API_BASE}/config/scenes`),
+                fetch(`${API_BASE}/config/cameras`),
+            ]);
+            if (!sceneRes.ok || !cameraRes.ok) throw new Error("获取配置失败");
+            const scenePayload = await sceneRes.json();
+            sceneMeta = (scenePayload.data || []).find((scene) => scene.id === sceneId) || null;
+            globalCameras = await cameraRes.json();
+            const allowedCameraIds = Array.isArray(sceneMeta?.cameras) && sceneMeta.cameras.length
+                ? new Set(sceneMeta.cameras)
+                : null;
+            sceneCameras = allowedCameraIds
+                ? globalCameras.filter((camera) => allowedCameraIds.has(camera.id))
+                : globalCameras.slice();
+            
+            if (sceneCameras.length > 0) {
+                if (!sceneCameras.some((camera) => camera.id === currentCameraId)) {
+                    currentCameraId = sceneCameras[0].id;
+                }
+                renderSceneHeader();
+                renderCameraTabs();
+                updateStream();
+                fetchModuleVisionBackendStatus();
+                if (dwellThresholdPanelEl.style.display === "flex") renderDwellThresholdPanel();
+            } else {
+                sceneNameEl.innerHTML = `<i class="fa-solid fa-link-slash" style="color: var(--danger);"></i> 场景未配置摄像头`;
+                document.getElementById("scene-desc").textContent = "请检查 rules.yaml 中的场景与摄像头绑定";
+                renderModuleVisionBackendUnavailable("当前摄像头方案：未配置");
+            }
+        } catch (e) {
+            sceneNameEl.innerHTML = `<i class="fa-solid fa-link-slash" style="color: var(--danger);"></i> 连接断开`;
+            renderModuleVisionBackendUnavailable("当前摄像头方案：引擎离线");
+        }
+    }
+
+    // ================= 4. 像素级防区编辑器 (拖拽版) =================
+    const drawCanvas = document.getElementById("draw-canvas");
+    const ctx = drawCanvas.getContext("2d");
+    const toggleEditBtn = document.getElementById("toggle-edit-btn");
+    const editToolbar = document.getElementById("edit-region-toolbar");
+    const roiDrawModeEl = document.getElementById("roi-draw-mode");
+    const roiDrawModeWrapEl = document.getElementById("roi-draw-mode-wrap");
+    const roiPathWidthWrapEl = document.getElementById("roi-path-width-wrap");
+    const roiPathWidthEl = document.getElementById("roi-path-width");
+    const roiPathWidthValueEl = document.getElementById("roi-path-width-value");
+
+    let editState = { active: false, type: null, id: null, points: [], currentCamConfig: null, drawingMode: "line", pathWidth: 0.08 };
+    let isDragging = false;
+    let startPoint = { x: 0, y: 0 };
+
+    function clamp01(value) {
+        return Math.max(0, Math.min(1, Number(value) || 0));
+    }
+
+    function roundPoint(x, y) {
+        return [Number(clamp01(x).toFixed(4)), Number(clamp01(y).toFixed(4))];
+    }
+
+    function distance2d(a, b) {
+        return Math.hypot((a?.[0] || 0) - (b?.[0] || 0), (a?.[1] || 0) - (b?.[1] || 0));
+    }
+
+    function normalizePathPoints(points = []) {
+        const normalized = [];
+        points.forEach((item) => {
+            if (!Array.isArray(item) || item.length < 2) return;
+            const point = roundPoint(item[0], item[1]);
+            if (normalized.length && distance2d(normalized[normalized.length - 1], point) < 0.0025) return;
+            normalized.push(point);
+        });
+        return normalized;
+    }
+
+    function buildCorridorPolygon(points = [], width = 0.08) {
+        const path = normalizePathPoints(points);
+        if (path.length < 2) return [];
+        const halfWidth = Math.max(0.01, Math.min(Number(width) || 0.08, 0.20)) / 2;
+
+        function tangentAt(index) {
+            let dx = 0;
+            let dy = 0;
+            if (index <= 0) {
+                dx = path[1][0] - path[0][0];
+                dy = path[1][1] - path[0][1];
+            } else if (index >= path.length - 1) {
+                dx = path[path.length - 1][0] - path[path.length - 2][0];
+                dy = path[path.length - 1][1] - path[path.length - 2][1];
+            } else {
+                dx = path[index + 1][0] - path[index - 1][0];
+                dy = path[index + 1][1] - path[index - 1][1];
+            }
+            const norm = Math.hypot(dx, dy);
+            if (norm <= 1e-6) return [1, 0];
+            return [dx / norm, dy / norm];
+        }
+
+        const left = [];
+        const right = [];
+        path.forEach((point, index) => {
+            const [tx, ty] = tangentAt(index);
+            const nx = -ty;
+            const ny = tx;
+            left.push(roundPoint(point[0] + nx * halfWidth, point[1] + ny * halfWidth));
+            right.push(roundPoint(point[0] - nx * halfWidth, point[1] - ny * halfWidth));
+        });
+        return left.concat(right.reverse());
+    }
+
+    function updateDrawModeUi() {
+        const isRoi = editState.type === "rois";
+        const isTrajectory = isRoi && editState.drawingMode === "trajectory";
+        roiDrawModeWrapEl.style.display = isRoi ? "flex" : "none";
+        roiPathWidthWrapEl.style.display = isTrajectory ? "flex" : "none";
+        roiDrawModeEl.value = isRoi ? editState.drawingMode : "line";
+        roiPathWidthEl.value = String(editState.pathWidth || 0.08);
+        roiPathWidthValueEl.textContent = Number(editState.pathWidth || 0.08).toFixed(2);
+    }
+
+    toggleEditBtn.addEventListener("click", function() {
+        if (!editState.active && !ensureAdminAccess()) return;
+        editState.active = !editState.active;
+        if (editState.active) {
+            this.innerHTML = `<i class="fa-solid fa-door-open"></i> 退出防区编辑`;
+            this.style.background = "rgba(14, 165, 233, 0.2)";
+            editToolbar.style.display = "flex";
+            drawCanvas.style.display = "block";
+            drawCanvas.style.pointerEvents = "auto";
+            resizeCanvas();
+            loadRegionOptions();
+        } else {
+            this.innerHTML = `<i class="fa-solid fa-pen-ruler"></i> 开启区域编辑`;
+            this.style.background = "transparent";
+            editToolbar.style.display = "none";
+            drawCanvas.style.display = "none";
+            drawCanvas.style.pointerEvents = "none";
+            ctx.clearRect(0, 0, drawCanvas.width, drawCanvas.height);
+        }
+    });
+
+    function loadRegionOptions() {
+        const curCam = getCurrentCameraConfig();
+        const sel = document.getElementById("region-select");
+        sel.innerHTML = "";
+        let count = 0;
+        if (curCam) {
+            editState.currentCamConfig = curCam;
+            (curCam.rois || []).forEach(r => { sel.innerHTML += `<option value="rois|${r.id}">越界线: ${r.label||r.id}</option>`; count++; });
+            (curCam.dwell_zones || []).forEach(z => { sel.innerHTML += `<option value="dwell_zones|${z.id}">滞留区: ${z.label||z.id}</option>`; count++; });
+        }
+        if (count > 0) loadSelectedRegionParams();
+        else sel.innerHTML = "<option>当前摄像头无防区</option>";
+    }
+
+    function loadSelectedRegionParams() {
+        const val = document.getElementById("region-select").value;
+        if (!val || !val.includes("|")) return;
+        const [type, id] = val.split("|");
+        editState.type = type; editState.id = id;
+        
+        const region = (editState.currentCamConfig[type] || []).find(r => r.id === id);
+        if (region) {
+            if (type === "rois") {
+                const hasTrajectory = Array.isArray(region.path_points) && region.path_points.length >= 2;
+                editState.drawingMode = hasTrajectory ? "trajectory" : "line";
+                editState.pathWidth = Number(region.path_width || 0.08);
+                editState.points = JSON.parse(JSON.stringify(hasTrajectory ? region.path_points : (region.line || [])));
+            } else {
+                editState.drawingMode = "line";
+                editState.points = JSON.parse(JSON.stringify(region.polygon || []));
+            }
+        } else {
+            editState.drawingMode = type === "rois" ? roiDrawModeEl.value : "line";
+            editState.points = [];
+        }
+        updateDrawModeUi();
+        redrawCanvas();
+    }
+
+    document.getElementById("region-select").addEventListener("change", loadSelectedRegionParams);
+    roiDrawModeEl.addEventListener("change", () => {
+        editState.drawingMode = roiDrawModeEl.value === "trajectory" ? "trajectory" : "line";
+        editState.points = [];
+        updateDrawModeUi();
+        redrawCanvas();
+    });
+    roiPathWidthEl.addEventListener("input", () => {
+        editState.pathWidth = Number(roiPathWidthEl.value || 0.08);
+        roiPathWidthValueEl.textContent = editState.pathWidth.toFixed(2);
+        redrawCanvas();
+    });
+
+    document.getElementById("start-draw-btn").addEventListener("click", () => {
+        if (!editState.type) return showModuleNotice("请先选择防区", "error");
+        editState.points = []; redrawCanvas();
+    });
+    document.getElementById("undo-draw-btn").addEventListener("click", () => {
+        editState.points = []; redrawCanvas();
+    });
+    document.getElementById("cancel-region-btn").addEventListener("click", () => {
+        toggleEditBtn.click();
+    });
+    document.getElementById("delete-region-btn").addEventListener("click", async () => {
+        if (!editState.type || !editState.id) return showModuleNotice("请先选择需要删除的防区", "error");
+        if (!ensureAdminAccess("请先返回总屏登录管理员账号，再删除防区。")) return;
+        const regionLabel = document.getElementById("region-select").selectedOptions[0]?.textContent || editState.id;
+        if (!(await showModuleConfirm(`确认删除【${regionLabel}】当前已划线/区域吗？删除后将立即从监控画面中移除。`, "删除防区"))) return;
+
+        try {
+            const query = new URLSearchParams({ region_type: editState.type });
+            const res = await authorizedFetch(`${API_BASE}/api/config/camera/${encodeURIComponent(currentCameraId)}/region/${encodeURIComponent(editState.id)}?${query.toString()}`, {
+                method: "DELETE",
+            });
+            const result = await res.json().catch(() => ({}));
+            if (!res.ok) throw new Error(result.detail || result.message || "删除失败");
+
+            editState.points = [];
+            redrawCanvas();
+            updateStream();
+            await loadConfig();
+            if (editState.active) loadRegionOptions();
+            showModuleNotice("已删除当前划线，规则引擎已同步更新。");
+        } catch (e) {
+            showModuleNotice(`删除失败：${e.message || "未知错误"}`, "error");
+        }
+    });
+
+    drawCanvas.addEventListener("mousedown", (e) => {
+        if (!editState.type) return showModuleNotice("请选择防区！", "error");
+        const rect = drawCanvas.getBoundingClientRect();
+        startPoint = { x: (e.clientX - rect.left) / rect.width, y: (e.clientY - rect.top) / rect.height };
+        isDragging = true;
+        if (editState.type === "rois" && editState.drawingMode === "trajectory") {
+            editState.points = [roundPoint(startPoint.x, startPoint.y)];
+            redrawCanvas();
+        }
+    });
+
+    drawCanvas.addEventListener("mousemove", (e) => {
+        if (!isDragging) return;
+        const rect = drawCanvas.getBoundingClientRect();
+        const curX = (e.clientX - rect.left) / rect.width;
+        const curY = (e.clientY - rect.top) / rect.height;
+        const currentPoint = roundPoint(curX, curY);
+
+        if (editState.type === "rois" && editState.drawingMode === "trajectory") {
+            const lastPoint = editState.points[editState.points.length - 1];
+            if (!lastPoint || distance2d(lastPoint, currentPoint) >= 0.005) {
+                editState.points.push(currentPoint);
+            }
+            redrawCanvas();
+            return;
+        }
+        
+        ctx.clearRect(0, 0, drawCanvas.width, drawCanvas.height);
+        ctx.lineWidth = 3; ctx.strokeStyle = "rgba(14, 165, 233, 0.9)";
+        
+        if (editState.type === "dwell_zones") {
+            ctx.fillStyle = "rgba(14, 165, 233, 0.3)";
+            ctx.beginPath();
+            ctx.rect(startPoint.x * drawCanvas.width, startPoint.y * drawCanvas.height, 
+                     (curX - startPoint.x) * drawCanvas.width, (curY - startPoint.y) * drawCanvas.height);
+            ctx.fill(); ctx.stroke();
+        } else {
+            ctx.beginPath();
+            ctx.moveTo(startPoint.x * drawCanvas.width, startPoint.y * drawCanvas.height);
+            ctx.lineTo(curX * drawCanvas.width, curY * drawCanvas.height);
+            ctx.stroke();
+        }
+    });
+
+    drawCanvas.addEventListener("mouseup", (e) => {
+        if (!isDragging) return;
+        isDragging = false;
+        const rect = drawCanvas.getBoundingClientRect();
+        const endX = (e.clientX - rect.left) / rect.width;
+        const endY = (e.clientY - rect.top) / rect.height;
+
+        if (editState.type === "dwell_zones") {
+            editState.points = [
+                [Number(startPoint.x.toFixed(4)), Number(startPoint.y.toFixed(4))],
+                [Number(endX.toFixed(4)), Number(startPoint.y.toFixed(4))],
+                [Number(endX.toFixed(4)), Number(endY.toFixed(4))],
+                [Number(startPoint.x.toFixed(4)), Number(endY.toFixed(4))]
+            ];
+        } else if (editState.type === "rois" && editState.drawingMode === "trajectory") {
+            const endPoint = roundPoint(endX, endY);
+            const lastPoint = editState.points[editState.points.length - 1];
+            if (!lastPoint || distance2d(lastPoint, endPoint) >= 0.0025) {
+                editState.points.push(endPoint);
+            }
+            editState.points = normalizePathPoints(editState.points);
+        } else {
+            editState.points = [
+                [Number(startPoint.x.toFixed(4)), Number(startPoint.y.toFixed(4))],
+                [Number(endX.toFixed(4)), Number(endY.toFixed(4))]
+            ];
+        }
+        redrawCanvas();
+    });
+
+    function redrawCanvas() {
+        ctx.clearRect(0, 0, drawCanvas.width, drawCanvas.height);
+        if (editState.points.length === 0) return;
+
+        if (editState.type === "rois" && editState.drawingMode === "trajectory") {
+            const corridor = buildCorridorPolygon(editState.points, editState.pathWidth);
+            if (corridor.length >= 4) {
+                ctx.beginPath();
+                ctx.moveTo(corridor[0][0] * drawCanvas.width, corridor[0][1] * drawCanvas.height);
+                for (let i = 1; i < corridor.length; i++) {
+                    ctx.lineTo(corridor[i][0] * drawCanvas.width, corridor[i][1] * drawCanvas.height);
+                }
+                ctx.closePath();
+                ctx.fillStyle = "rgba(14, 165, 233, 0.22)";
+                ctx.fill();
+                ctx.lineWidth = 2;
+                ctx.strokeStyle = "rgba(14, 165, 233, 0.85)";
+                ctx.stroke();
+            }
+            ctx.beginPath();
+            ctx.lineWidth = 3;
+            ctx.strokeStyle = "rgba(16, 185, 129, 0.95)";
+            ctx.moveTo(editState.points[0][0] * drawCanvas.width, editState.points[0][1] * drawCanvas.height);
+            for (let i = 1; i < editState.points.length; i++) {
+                ctx.lineTo(editState.points[i][0] * drawCanvas.width, editState.points[i][1] * drawCanvas.height);
+            }
+            ctx.stroke();
+        } else {
+            ctx.lineWidth = 3; ctx.strokeStyle = "rgba(16, 185, 129, 0.9)";
+            ctx.beginPath();
+            ctx.moveTo(editState.points[0][0] * drawCanvas.width, editState.points[0][1] * drawCanvas.height);
+            for (let i = 1; i < editState.points.length; i++) {
+                ctx.lineTo(editState.points[i][0] * drawCanvas.width, editState.points[i][1] * drawCanvas.height);
+            }
+            if (editState.type === "dwell_zones") {
+                ctx.closePath();
+                ctx.fillStyle = "rgba(16, 185, 129, 0.25)"; ctx.fill();
+            }
+            ctx.stroke();
+        }
+
+        ctx.fillStyle = "#fff";
+        editState.points.forEach((p, index) => {
+            const radius = (editState.type === "rois" && editState.drawingMode === "trajectory" && index !== 0 && index !== editState.points.length - 1) ? 3 : 5;
+            ctx.beginPath(); ctx.arc(p[0] * drawCanvas.width, p[1] * drawCanvas.height, radius, 0, Math.PI*2); ctx.fill();
+        });
+    }
+
+    function resizeCanvas() {
+        const rect = drawCanvas.getBoundingClientRect();
+        drawCanvas.width = rect.width; drawCanvas.height = rect.height;
+    }
+    window.addEventListener("resize", () => { if(editState.active){ resizeCanvas(); redrawCanvas(); } });
+    window.addEventListener("beforeunload", () => {
+        if (screenRecordingActive) {
+            stopRecording();
+        }
+    });
+
+    document.getElementById("save-region-btn").addEventListener("click", async () => {
+        if (!editState.type || editState.points.length === 0) return showModuleNotice("请先在画面上拖拽绘制！", "error");
+        if (!ensureAdminAccess("请先返回总屏登录管理员账号，再保存防区。")) return;
+        try {
+            const payload = { region_type: editState.type, points: editState.points };
+            if (editState.type === "rois") {
+                payload.drawing_mode = editState.drawingMode;
+                payload.path_width = Number(editState.pathWidth || 0.08);
+            }
+            const res = await authorizedFetch(`${API_BASE}/api/config/camera/${encodeURIComponent(currentCameraId)}/region/${encodeURIComponent(editState.id)}`, {
+                method: "POST", headers: { "Content-Type": "application/json" },
+                body: JSON.stringify(payload)
+            });
+            const result = await res.json().catch(() => ({}));
+            if (!res.ok) throw new Error(result.detail || result.message || "保存失败");
+            showModuleNotice("防区已生效并热更新至核心引擎！");
+            toggleEditBtn.click();
+            await loadConfig();
+        } catch (e) {
+            showModuleNotice(`保存失败：${e.message || "未知错误"}`, "error");
+        }
+    });
+
+    // ================= 5. 数据轮询 (空状态 UI 升级) =================
+    async function poll() {
+        try {
+            const alertsUrl = new URL(`${API_BASE}/alerts`);
+            alertsUrl.searchParams.set("limit", "30");
+            if (sceneMeta?.id) {
+                alertsUrl.searchParams.set("scene_id", sceneMeta.id);
+            } else if (currentCameraId) {
+                alertsUrl.searchParams.set("camera_id", currentCameraId);
+            }
+            const res = await fetch(alertsUrl.toString());
+            const data = await res.json();
+            const grid = document.getElementById("events-list");
+            const alerts = Array.isArray(data.data) ? data.data : [];
+            
+            if (alerts.length === 0) {
+                grid.innerHTML = `<div style="padding: 40px; text-align: center; color: var(--text-sub);"><i class="fa-solid fa-shield-cat" style="font-size: 2rem; margin-bottom: 10px; opacity: 0.5;"></i><br>暂无近期告警事件</div>`;
+            } else {
+                grid.innerHTML = "";
+                alerts.forEach(item => {
+                    grid.innerHTML += `<li class="event-item">
+                        <span style="color:var(--brand); min-width: 80px;"><i class="fa-regular fa-clock"></i> ${formatClockTime(item.timestamp)}</span> 
+                        <span style="color:var(--text-main)">${item.message}</span>
+                    </li>`;
+                });
+            }
+
+            const sigGrid = document.getElementById("signal-grid");
+            let htmlStr = "";
+            let hasSignal = false;
+            let signalEntries = [];
+
+            if (sceneMeta?.id) {
+                const sigRes = await fetch(`${API_BASE}/signals/scenes/${encodeURIComponent(sceneMeta.id)}`);
+                const sigData = await sigRes.json().catch(() => ({}));
+                signalEntries = Object.entries(sigData.signals_cn || {});
+            }
+
+            signalEntries.forEach(([k, v]) => {
+                hasSignal = true;
+                htmlStr += `<div class="signal-item"><div class="label">${k}</div><div class="value ${v>0?'true':'false'}">${v}</div></div>`;
+            });
+
+            if (!hasSignal) {
+                sigGrid.innerHTML = `<div style="padding: 40px; text-align: center; color: var(--text-sub); grid-column: 1 / -1;"><i class="fa-solid fa-satellite" style="font-size: 2rem; margin-bottom: 10px; opacity: 0.5;"></i><br>实时引擎暂无信号输出</div>`;
+            } else {
+                sigGrid.innerHTML = htmlStr;
+            }
+        } catch(e) {
+            if (sigGrid) sigGrid.innerHTML = `<div style="padding: 20px; text-align: center; color: var(--danger); font-size: 0.85rem; grid-column: 1 / -1;"><i class="fa-solid fa-triangle-exclamation"></i> 后端连接中断，信号数据暂停更新</div>`;
+        }
+    }
+
+    window.addEventListener("DOMContentLoaded", () => {
+        // 初始化已移至上方 setTimeout 中
+    });
+  </script>
+</body>
+</html>

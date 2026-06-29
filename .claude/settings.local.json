@@ -1,0 +1,43 @@
+{
+  "permissions": {
+    "allow": [
+      "WebSearch",
+      "WebFetch(domain:docs.anthropic.com)",
+      "Bash(claude *)",
+      "Bash(npm view *)",
+      "Bash(python *)",
+      "Bash(where git *)",
+      "Bash(env)",
+      "Bash(node *)",
+      "Bash(CLAUDE_CODE_GIT_BASH_PATH=\"D:\\\\Program Files\\\\Git\\\\usr\\\\bin\\\\bash.exe\" claude plugins install claude-code-setup@claude-plugins-official -s user)",
+      "Bash(CLAUDE_CODE_GIT_BASH_PATH=\"D:\\\\Program Files\\\\Git\\\\usr\\\\bin\\\\bash.exe\" claude plugins install claude-md-management@claude-plugins-official -s user)",
+      "Bash(CLAUDE_CODE_GIT_BASH_PATH=\"D:\\\\Program Files\\\\Git\\\\usr\\\\bin\\\\bash.exe\" claude plugins install frontend-design@claude-plugins-official -s user)",
+      "Bash(CLAUDE_CODE_GIT_BASH_PATH=\"D:\\\\Program Files\\\\Git\\\\usr\\\\bin\\\\bash.exe\" claude plugins install hookify@claude-plugins-official -s user)",
+      "Bash(CLAUDE_CODE_GIT_BASH_PATH=\"D:\\\\Program Files\\\\Git\\\\usr\\\\bin\\\\bash.exe\" claude plugins install math-olympiad@claude-plugins-official -s user)",
+      "Bash(CLAUDE_CODE_GIT_BASH_PATH=\"D:\\\\Program Files\\\\Git\\\\usr\\\\bin\\\\bash.exe\" claude plugins *)",
+      "Skill(update-config)",
+      "Bash(jq *)",
+      "Bash(./.venv/Scripts/python.exe -m unittest discover -s backend/tests -p \"test_*.py\" -v)",
+      "PowerShell(Get-Command *)",
+      "Bash(command -v claude、)",
+      "Bash(npm list *)",
+      "Bash(npm uninstall *)",
+      "Bash(command -v claude)",
+      "Bash(dir \"D:\\\\Project\")",
+      "Bash(.\\\\.venv\\\\Scripts\\\\python.exe -c \"import docx; print\\(docx.__version__\\)\")",
+      "Bash(\"D:\\\\Project\\\\.venv\\\\Scripts\\\\python.exe\" -c \"import docx; print\\(docx.__version__\\)\")",
+      "Bash(\"D:\\\\Project\\\\.venv\\\\Scripts\\\\python.exe\" \"D:\\\\Project\\\\scripts\\\\gen_docx.py\")",
+      "Bash(python3 -c \"import docx; print\\('python-docx available'\\)\")",
+      "Bash(where python *)",
+      "Bash(where py *)",
+      "Bash(where python3 *)",
+      "Bash(\"D:\\\\Program Files \\(x86\\)\\\\Python310\\\\python.exe\" -c \"import docx; print\\('python-docx available'\\)\")",
+      "Read(//c/Users/fy/Desktop/**)",
+      "Bash(dir \"C:\\\\Users\\\\fy\\\\Desktop\\\\AI推演_不进行三大改造的后果分析.docx\")",
+      "mcp__web-tools__search_web",
+      "Bash(gh search *)",
+      "Bash(curl -s \"https://api.github.com/search/repositories?q=claude+superpowers&per_page=5\")",
+      "Bash(curl -s \"https://raw.githubusercontent.com/obra/superpowers-marketplace/main/README.md\")"
+    ]
+  }
+}

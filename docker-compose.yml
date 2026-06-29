@@ -1,0 +1,25 @@
+services:
+  project:
+    build: .
+    container_name: project
+    env_file:
+      - .env
+    environment:
+      APP_ENV: production
+      ALLOW_DEBUG_TOOLS: "0"
+      LOG_MAX_BYTES: "10485760"
+      LOG_BACKUP_COUNT: "5"
+    ports:
+      - "80:80"
+    volumes:
+      - ./backend:/app/backend
+      - ./frontend/static:/usr/share/nginx/html
+      - ./data:/app/data
+      - ./config:/app/config
+      - ./models:/app/models:ro
+    restart: unless-stopped
+    healthcheck:
+      test: ["CMD", "python", "-c", "import urllib.request; urllib.request.urlopen('http://127.0.0.1:8000/health', timeout=3)"]
+      interval: 15s
+      timeout: 5s
+      retries: 3

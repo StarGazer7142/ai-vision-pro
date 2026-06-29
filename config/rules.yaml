@@ -1,0 +1,145 @@
+scenes:
+- id: campus_fence
+  name: 园区内部围栏检测
+  description: 翻越围栏检测 + 围栏滞留检测
+  cameras:
+  - cam_fence
+  rule_ids:
+  - fence_intrusion
+  - fence_dwell
+  entry_page: module.html?scene=campus_fence
+- id: warehouse_dock
+  name: 仓库+码头滞留检测
+  description: 码头区域滞留检测（人）+ 仓库滞留检测
+  cameras:
+  - cam_dock
+  - cam_warehouse
+  rule_ids:
+  - dock_dwell_person
+  - warehouse_dwell
+  entry_page: module.html?scene=warehouse_dock
+cameras:
+- id: cam_fence
+  name: 园区内部围栏
+  stream: camera://0
+  rois:
+  - id: fence_top
+    type: boundary_line
+    label: 围栏警戒线
+    line:
+    - - 0.1957
+      - 0.3094
+    - - 0.8235
+      - 0.2923
+    polygon: []
+    path_points: []
+    path_width: 0.08
+    draw_mode: line
+  dwell_zones:
+  - id: fence_inside
+    label: 围栏内侧滞留区 (全屏)
+    polygon: []
+    threshold_seconds: 5
+  original_stream: camera://0
+- id: cam_dock
+  name: 码头区域摄像头
+  stream: camera://0
+  rois: []
+  dwell_zones:
+  - id: dock_zone
+    label: 码头滞留区域 (全屏)
+    polygon:
+    - - 0.0
+      - 0.0
+    - - 1.0
+      - 0.0
+    - - 1.0
+      - 1.0
+    - - 0.0
+      - 1.0
+    threshold_seconds: 5
+  original_stream: camera://0
+- id: cam_warehouse
+  name: 仓库区域摄像头
+  stream: data/uploads/videos/cam_warehouse/20260616_071234_仓库.mp4
+  rois: []
+  dwell_zones:
+  - id: warehouse_zone
+    label: 仓库滞留区域 (全屏)
+    polygon:
+    - - 0.3075
+      - 0.0964
+    - - 0.5909
+      - 0.0964
+    - - 0.5909
+      - 0.9718
+    - - 0.3075
+      - 0.9718
+    threshold_seconds: 5
+  original_stream: camera://0
+rules:
+- id: fence_intrusion
+  type: boundary
+  camera_id: cam_fence
+  roi_id: fence_top
+  severity: high
+  desc: 园区内部翻越围栏检测
+  alert_label: 翻越围栏
+  category_filter:
+  - person
+  crossing_direction: any
+  confirm_frames: 4
+  trigger_side: neg
+  signal_key: is_fence_climb
+  count_key: fence_climb_count
+  signal_cn: 是否翻越围栏
+  count_cn: 翻越围栏人数
+  cooldown_seconds: 5
+  min_vertical_speed: 0.015
+  max_aspect_ratio_change: 0.15
+- id: fence_dwell
+  type: dwell
+  camera_id: cam_fence
+  zone_id: fence_inside
+  threshold_seconds: 5
+  confirm_frames: 1
+  severity: medium
+  desc: 园区内部围栏区域滞留检测
+  alert_label: 人员滞留
+  category_filter:
+  - person
+  signal_key: is_dwell
+  count_key: dwell_count
+  signal_cn: 是否滞留
+  count_cn: 滞留人数
+  cooldown_seconds: 5
+- id: dock_dwell_person
+  type: dwell
+  camera_id: cam_dock
+  zone_id: dock_zone
+  threshold_seconds: 5
+  confirm_frames: 1
+  severity: medium
+  desc: 码头区域滞留检测（人）
+  category_filter:
+  - person
+  signal_key: is_dock_dwell
+  count_key: dock_dwell_count
+  signal_cn: 码头是否滞留
+  count_cn: 码头滞留人数
+  cooldown_seconds: 5
+- id: warehouse_dwell
+  type: dwell
+  camera_id: cam_warehouse
+  zone_id: warehouse_zone
+  threshold_seconds: 5
+  confirm_frames: 1
+  severity: medium
+  desc: 仓库滞留检测
+  category_filter:
+  - person
+  signal_key: is_warehouse_dwell
+  count_key: warehouse_dwell_count
+  signal_cn: 仓库是否滞留
+  count_cn: 仓库滞留人数
+  cooldown_seconds: 5

@@ -1,0 +1,10 @@
+﻿Build Time: 2026-04-26 18:15:31
+Package Type: colleague delivery
+Default Model: models/yolo26s.pt
+Default Streams: relative demo videos under data/acceptance_demo
+
+Quick Start:
+1. Run setup_env.bat
+2. Run start_delivery.bat
+3. Open http://127.0.0.1:5500/index.html
+4. Read docs\同事电脑复刻部署说明.md for full instructions

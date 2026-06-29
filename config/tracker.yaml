@@ -1,0 +1,6 @@
+﻿tracker:
+  type: iou_greedy_tracker
+  match_thresh: 0.15
+  track_buffer: 60
+  frame_rate: 25
+  max_age_seconds: 5.0

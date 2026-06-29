@@ -1,0 +1,992 @@
+{
+  "schema": "openai.presentation.layout/v4",
+  "unit": "px",
+  "slide": {
+    "aid": "sl/beweah",
+    "id": "beweah",
+    "slide": 15,
+    "layoutId": "9c650129-dd05-4bfe-8455-ecd1f767cb7c",
+    "layoutName": "Title Slide",
+    "layoutType": "title",
+    "masterLayoutId": "e36a79b0-004f-4925-a2d9-4b059dbb6cd5",
+    "masterLayoutName": "Master",
+    "frame": {
+      "left": 0,
+      "top": 0,
+      "width": 1280,
+      "height": 720
+    }
+  },
+  "theme": {
+    "colorSchemeName": "ChatGPT",
+    "colors": {
+      "accent1": "#156082",
+      "accent2": "#E97132",
+      "accent3": "#196B24",
+      "accent4": "#0F9ED5",
+      "accent5": "#A02B93",
+      "accent6": "#4EA72E",
+      "bg1": "#FFFFFF",
+      "bg2": "#000000",
+      "tx1": "#1F1F1F",
+      "tx2": "#FFFFFF",
+      "dk1": "#000000",
+      "lt1": "#FFFFFF",
+      "dk2": "#0E2841",
+      "lt2": "#E8E8E8",
+      "hlink": "#467886",
+      "folHlink": "#96607D"
+    },
+    "typefaces": [
+      "Microsoft YaHei"
+    ]
+  },
+  "inheritedLayers": [
+    {
+      "scope": "layout",
+      "id": "9c650129-dd05-4bfe-8455-ecd1f767cb7c",
+      "name": "Title Slide",
+      "type": "title",
+      "parentLayoutId": "e36a79b0-004f-4925-a2d9-4b059dbb6cd5",
+      "elements": []
+    },
+    {
+      "scope": "master",
+      "id": "e36a79b0-004f-4925-a2d9-4b059dbb6cd5",
+      "name": "Master",
+      "type": "master",
+      "elements": []
+    }
+  ],
+  "elements": [
+    {
+      "order": 1,
+      "kind": "shape",
+      "scope": "slide",
+      "aid": "sh/at47y1kr",
+      "id": "1",
+      "bbox": [
+        0,
+        0,
+        1280,
+        720
+      ],
+      "geometry": "rect",
+      "fillColor": "#07111F",
+      "lineColor": "rgba(0, 0, 0, 0)",
+      "lineWidth": 0
+    },
+    {
+      "order": 2,
+      "kind": "shape",
+      "scope": "slide",
+      "aid": "sh/lkjm1cfa",
+      "id": "2",
+      "bbox": [
+        0,
+        0,
+        1280,
+        720
+      ],
+      "geometry": "rect",
+      "fillColor": "rgba(0, 0, 0, 0)",
+      "lineColor": "rgba(0, 0, 0, 0)",
+      "lineWidth": 0
+    },
+    {
+      "order": 3,
+      "kind": "shape",
+      "scope": "slide",
+      "aid": "sh/szqtcj6t",
+      "id": "3",
+      "bbox": [
+        80,
+        0,
+        1,
+        1
+      ],
+      "geometry": "rect",
+      "fillColor": "#10243A",
+      "lineColor": "rgba(0, 0, 0, 0)",
+      "lineWidth": 0
+    },
+    {
+      "order": 4,
+      "kind": "shape",
+      "scope": "slide",
+      "aid": "sh/32lszqtc",
+      "id": "4",
+      "bbox": [
+        160,
+        0,
+        1,
+        1
+      ],
+      "geometry": "rect",
+      "fillColor": "#10243A",
+      "lineColor": "rgba(0, 0, 0, 0)",
+      "lineWidth": 0
+    },
+    {
+      "order": 5,
+      "kind": "shape",
+      "scope": "slide",
+      "aid": "sh/ahoza1gv",
+      "id": "5",
+      "bbox": [
+        240,
+        0,
+        1,
+        1
+      ],
+      "geometry": "rect",
+      "fillColor": "#10243A",
+      "lineColor": "rgba(0, 0, 0, 0)",
+      "lineWidth": 0
+    },
+    {
+      "order": 6,
+      "kind": "shape",
+      "scope": "slide",
+      "aid": "sh/l87ed8ba",
+      "id": "6",
+      "bbox": [
+        320,
+        0,
+        1,
+        1
+      ],
+      "geometry": "rect",
+      "fillColor": "#10243A",
+      "lineColor": "rgba(0, 0, 0, 0)",
+      "lineWidth": 0
+    },
+    {
+      "order": 7,
+      "kind": "shape",
+      "scope": "slide",
+      "aid": "sh/sneloj2t",
+      "id": "7",
+      "bbox": [
+        400,
+        0,
+        1,
+        1
+      ],
+      "geometry": "rect",
+      "fillColor": "#10243A",
+      "lineColor": "rgba(0, 0, 0, 0)",
+      "lineWidth": 0
+    },
+    {
+      "order": 8,
+      "kind": "shape",
+      "scope": "slide",
+      "aid": "sh/3q5o7qpg",
+      "id": "8",
+      "bbox": [
+        480,
+        0,
+        1,
+        1
+      ],
+      "geometry": "rect",
+      "fillColor": "#10243A",
+      "lineColor": "rgba(0, 0, 0, 0)",
+      "lineWidth": 0
+    },
+    {
+      "order": 9,
+      "kind": "shape",
+      "scope": "slide",
+      "aid": "sh/e9cvixcz",
+      "id": "9",
+      "bbox": [
+        560,
+        0,
+        1,
+        1
+      ],
+      "geometry": "rect",
+      "fillColor": "#10243A",
+      "lineColor": "rgba(0, 0, 0, 0)",
+      "lineWidth": 0
+    },
+    {
+      "order": 10,
+      "kind": "shape",
+      "scope": "slide",
+      "aid": "sh/87ed8bat",
+      "id": "10",
+      "bbox": [
+        640,
+        0,
+        1,
+        1
+      ],
+      "geometry": "rect",
+      "fillColor": "#10243A",
+      "lineColor": "rgba(0, 0, 0, 0)",
+      "lineWidth": 0
+    },
+    {
+      "order": 11,
+      "kind": "shape",
+      "scope": "slide",
+      "aid": "sh/xs72x4na",
+      "id": "11",
+      "bbox": [
+        720,
+        0,
+        1,
+        1
+      ],
+      "geometry": "rect",
+      "fillColor": "#10243A",
+      "lineColor": "rgba(0, 0, 0, 0)",
+      "lineWidth": 0
+    },
+    {
+      "order": 12,
+      "kind": "shape",
+      "scope": "slide",
+      "aid": "sh/q1orytsv",
+      "id": "12",
+      "bbox": [
+        800,
+        0,
+        1,
+        1
+      ],
+      "geometry": "rect",
+      "fillColor": "#10243A",
+      "lineColor": "rgba(0, 0, 0, 0)",
+      "lineWidth": 0
+    },
+    {
+      "order": 13,
+      "kind": "shape",
+      "scope": "slide",
+      "aid": "sh/fmlkjm1c",
+      "id": "13",
+      "bbox": [
+        880,
+        0,
+        1,
+        1
+      ],
+      "geometry": "rect",
+      "fillColor": "#10243A",
+      "lineColor": "rgba(0, 0, 0, 0)",
+      "lineWidth": 0
+    },
+    {
+      "order": 14,
+      "kind": "shape",
+      "scope": "slide",
+      "aid": "sh/8z25kb6x",
+      "id": "14",
+      "bbox": [
+        960,
+        0,
+        1,
+        1
+      ],
+      "geometry": "rect",
+      "fillColor": "#10243A",
+      "lineColor": "rgba(0, 0, 0, 0)",
+      "lineWidth": 0
+    },
+    {
+      "order": 15,
+      "kind": "shape",
+      "scope": "slide",
+      "aid": "sh/1gvy90je",
+      "id": "15",
+      "bbox": [
+        1040,
+        0,
+        1,
+        1
+      ],
+      "geometry": "rect",
+      "fillColor": "#10243A",
+      "lineColor": "rgba(0, 0, 0, 0)",
+      "lineWidth": 0
+    },
+    {
+      "order": 16,
+      "kind": "shape",
+      "scope": "slide",
+      "aid": "sh/qtcj6tov",
+      "id": "16",
+      "bbox": [
+        1120,
+        0,
+        1,
+        1
+      ],
+      "geometry": "rect",
+      "fillColor": "#10243A",
+      "lineColor": "rgba(0, 0, 0, 0)",
+      "lineWidth": 0
+    },
+    {
+      "order": 17,
+      "kind": "shape",
+      "scope": "slide",
+      "aid": "sh/je9cvixc",
+      "id": "17",
+      "bbox": [
+        1200,
+        0,
+        1,
+        1
+      ],
+      "geometry": "rect",
+      "fillColor": "#10243A",
+      "lineColor": "rgba(0, 0, 0, 0)",
+      "lineWidth": 0
+    },
+    {
+      "order": 18,
+      "kind": "shape",
+      "scope": "slide",
+      "aid": "sh/8v6psfil",
+      "id": "18",
+      "bbox": [
+        0,
+        80,
+        1280,
+        1
+      ],
+      "geometry": "rect",
+      "fillColor": "#10243A",
+      "lineColor": "rgba(0, 0, 0, 0)",
+      "lineWidth": 0
+    },
+    {
+      "order": 19,
+      "kind": "shape",
+      "scope": "slide",
+      "aid": "sh/xczed8v6",
+      "id": "19",
+      "bbox": [
+        0,
+        160,
+        1280,
+        1
+      ],
+      "geometry": "rect",
+      "fillColor": "#10243A",
+      "lineColor": "rgba(0, 0, 0, 0)",
+      "lineWidth": 0
+    },
+    {
+      "order": 20,
+      "kind": "shape",
+      "scope": "slide",
+      "aid": "sh/hoza1gvy",
+      "id": "20",
+      "bbox": [
+        0,
+        240,
+        1280,
+        1
+      ],
+      "geometry": "rect",
+      "fillColor": "#10243A",
+      "lineColor": "rgba(0, 0, 0, 0)",
+      "lineWidth": 0
+    },
+    {
+      "order": 21,
+      "kind": "shape",
+      "scope": "slide",
+      "aid": "sh/s36hcrmh",
+      "id": "21",
+      "bbox": [
+        0,
+        320,
+        1280,
+        1
+      ],
+      "geometry": "rect",
+      "fillColor": "#10243A",
+      "lineColor": "rgba(0, 0, 0, 0)",
+      "lineWidth": 0
+    },
+    {
+      "order": 22,
+      "kind": "shape",
+      "scope": "slide",
+      "aid": "sh/zidonyd0",
+      "id": "22",
+      "bbox": [
+        0,
+        400,
+        1280,
+        1
+      ],
+      "geometry": "rect",
+      "fillColor": "#10243A",
+      "lineColor": "rgba(0, 0, 0, 0)",
+      "lineWidth": 0
+    },
+    {
+      "order": 23,
+      "kind": "shape",
+      "scope": "slide",
+      "aid": "sh/a1gvy90j",
+      "id": "23",
+      "bbox": [
+        0,
+        480,
+        1280,
+        1
+      ],
+      "geometry": "rect",
+      "fillColor": "#10243A",
+      "lineColor": "rgba(0, 0, 0, 0)",
+      "lineWidth": 0
+    },
+    {
+      "order": 24,
+      "kind": "shape",
+      "scope": "slide",
+      "aid": "sh/hgn29gr2",
+      "id": "24",
+      "bbox": [
+        0,
+        560,
+        1280,
+        1
+      ],
+      "geometry": "rect",
+      "fillColor": "#10243A",
+      "lineColor": "rgba(0, 0, 0, 0)",
+      "lineWidth": 0
+    },
+    {
+      "order": 25,
+      "kind": "shape",
+      "scope": "slide",
+      "aid": "sh/svu9knih",
+      "id": "25",
+      "bbox": [
+        0,
+        640,
+        1280,
+        1
+      ],
+      "geometry": "rect",
+      "fillColor": "#10243A",
+      "lineColor": "rgba(0, 0, 0, 0)",
+      "lineWidth": 0
+    },
+    {
+      "order": 26,
+      "kind": "shape",
+      "scope": "slide",
+      "aid": "sh/za1gvy90",
+      "id": "26",
+      "bbox": [
+        0,
+        0,
+        1280,
+        42
+      ],
+      "geometry": "rect",
+      "fillColor": "#081827",
+      "lineColor": "rgba(0, 0, 0, 0)",
+      "lineWidth": 0
+    },
+    {
+      "order": 27,
+      "kind": "shape",
+      "scope": "slide",
+      "aid": "sh/ap4r65wj",
+      "id": "27",
+      "bbox": [
+        0,
+        42,
+        1280,
+        1
+      ],
+      "geometry": "rect",
+      "fillColor": "#143D58",
+      "lineColor": "rgba(0, 0, 0, 0)",
+      "lineWidth": 0
+    },
+    {
+      "order": 28,
+      "kind": "shape",
+      "scope": "slide",
+      "aid": "sh/h4byhgn2",
+      "id": "28",
+      "bbox": [
+        48,
+        17,
+        360,
+        14
+      ],
+      "geometry": "rect",
+      "text": "CONCLUSION",
+      "textPreview": "CONCLUSION",
+      "resolvedFontSize": 9,
+      "resolvedTextStyle": {
+        "fontSize": 9,
+        "typeface": "Microsoft YaHei",
+        "bold": true,
+        "alignment": "left"
+      },
+      "textLayout": {
+        "lineCount": 1,
+        "lines": [
+          {
+            "index": 1,
+            "text": "CONCLUSION"
+          }
+        ]
+      },
+      "paragraphs": [
+        {
+          "index": 1,
+          "text": "CONCLUSION",
+          "runs": [
+            {
+              "index": 1,
+              "text": "CONCLUSION",
+              "fontSize": 9,
+              "typeface": "Microsoft YaHei",
+              "color": "#2EE6FF",
+              "bold": true
+            }
+          ]
+        }
+      ],
+      "fillColor": "rgba(0, 0, 0, 0)",
+      "lineColor": "rgba(0, 0, 0, 0)",
+      "lineWidth": 0
+    },
+    {
+      "order": 29,
+      "kind": "shape",
+      "scope": "slide",
+      "aid": "sh/sji5snel",
+      "id": "29",
+      "bbox": [
+        1010,
+        16,
+        220,
+        14
+      ],
+      "geometry": "rect",
+      "text": "AI 视频识别信号平台 / 15",
+      "textPreview": "AI 视频识别信号平台 / 15",
+      "resolvedFontSize": 8,
+      "resolvedTextStyle": {
+        "fontSize": 8,
+        "typeface": "Microsoft YaHei",
+        "alignment": "right"
+      },
+      "textLayout": {
+        "lineCount": 1,
+        "lines": [
+          {
+            "index": 1,
+            "text": "AI 视频识别信号平台 / 15"
+          }
+        ]
+      },
+      "paragraphs": [
+        {
+          "index": 1,
+          "text": "AI 视频识别信号平台 / 15",
+          "runs": [
+            {
+              "index": 1,
+              "text": "AI 视频识别信号平台 / 15",
+              "fontSize": 8,
+              "typeface": "Microsoft YaHei",
+              "color": "#7F9AB2"
+            }
+          ]
+        }
+      ],
+      "fillColor": "rgba(0, 0, 0, 0)",
+      "lineColor": "rgba(0, 0, 0, 0)",
+      "lineWidth": 0
+    },
+    {
+      "order": 30,
+      "kind": "shape",
+      "scope": "slide",
+      "aid": "sh/2lszqtcj",
+      "id": "30",
+      "bbox": [
+        48,
+        74,
+        770,
+        62
+      ],
+      "geometry": "rect",
+      "text": "项目结论",
+      "textPreview": "项目结论",
+      "resolvedFontSize": 31,
+      "resolvedTextStyle": {
+        "fontSize": 31,
+        "typeface": "Microsoft YaHei",
+        "bold": true,
+        "alignment": "left"
+      },
+      "textLayout": {
+        "lineCount": 1,
+        "lines": [
+          {
+            "index": 1,
+            "text": "项目结论"
+          }
+        ]
+      },
+      "paragraphs": [
+        {
+          "index": 1,
+          "text": "项目结论",
+          "runs": [
+            {
+              "index": 1,
+              "text": "项目结论",
+              "fontSize": 31,
+              "typeface": "Microsoft YaHei",
+              "color": "#F3FAFF",
+              "bold": true
+            }
+          ]
+        }
+      ],
+      "fillColor": "rgba(0, 0, 0, 0)",
+      "lineColor": "rgba(0, 0, 0, 0)",
+      "lineWidth": 0
+    },
+    {
+      "order": 31,
+      "kind": "shape",
+      "scope": "slide",
+      "aid": "sh/v6psfil0",
+      "id": "31",
+      "bbox": [
+        50,
+        139,
+        790,
+        50
+      ],
+      "geometry": "rect",
+      "text": "当前平台已从单一检测Demo升级为具备实时监控、设备管理、告警闭\n环、回放追溯、权限审计和运维交付能力的完整业务系统。",
+      "textPreview": "当前平台已从单一检测Demo升级为具备实时监控、设备管理、告警闭 | 环、回放追溯、权限审计和运维交付能力的完整业务系统。",
+      "resolvedFontSize": 18,
+      "resolvedTextStyle": {
+        "fontSize": 18,
+        "typeface": "Microsoft YaHei",
+        "alignment": "left"
+      },
+      "textLayout": {
+        "lineCount": 2,
+        "lines": [
+          {
+            "index": 1,
+            "text": "当前平台已从单一检测Demo升级为具备实时监控、设备管理、告警闭"
+          },
+          {
+            "index": 2,
+            "text": "环、回放追溯、权限审计和运维交付能力的完整业务系统。"
+          }
+        ]
+      },
+      "paragraphs": [
+        {
+          "index": 1,
+          "text": "当前平台已从单一检测Demo升级为具备实时监控、设备管理、告警闭",
+          "runs": [
+            {
+              "index": 1,
+              "text": "当前平台已从单一检测Demo升级为具备实时监控、设备管理、告警闭",
+              "fontSize": 18,
+              "typeface": "Microsoft YaHei",
+              "color": "#C8D8E8"
+            }
+          ]
+        },
+        {
+          "index": 2,
+          "text": "环、回放追溯、权限审计和运维交付能力的完整业务系统。",
+          "runs": [
+            {
+              "index": 1,
+              "text": "环、回放追溯、权限审计和运维交付能力的完整业务系统。",
+              "fontSize": 18,
+              "typeface": "Microsoft YaHei",
+              "color": "#C8D8E8"
+            }
+          ]
+        }
+      ],
+      "fillColor": "rgba(0, 0, 0, 0)",
+      "lineColor": "rgba(0, 0, 0, 0)",
+      "lineWidth": 0
+    },
+    {
+      "order": 32,
+      "kind": "shape",
+      "scope": "slide",
+      "aid": "sh/knih4byh",
+      "id": "32",
+      "bbox": [
+        120,
+        252,
+        1040,
+        182
+      ],
+      "geometry": "rect",
+      "fillColor": "#0F263A",
+      "lineColor": "#2EE6FF",
+      "lineWidth": 2
+    },
+    {
+      "order": 33,
+      "kind": "shape",
+      "scope": "slide",
+      "aid": "sh/d8bat47y",
+      "id": "33",
+      "bbox": [
+        165,
+        292,
+        950,
+        84
+      ],
+      "geometry": "rect",
+      "text": "当前平台已从单一检测Demo升级为具备实时监控、设备管理、告警闭环、回放\n追溯、权限审计和运维交付能力的完整业务系统。",
+      "textPreview": "当前平台已从单一检测Demo升级为具备实时监控、设备管理、告警闭环、回放 | 追溯、权限审计和运维交付能力的完整业务系统。",
+      "resolvedFontSize": 24,
+      "resolvedTextStyle": {
+        "fontSize": 24,
+        "typeface": "Microsoft YaHei",
+        "bold": true,
+        "alignment": "center"
+      },
+      "textLayout": {
+        "lineCount": 2,
+        "lines": [
+          {
+            "index": 1,
+            "text": "当前平台已从单一检测Demo升级为具备实时监控、设备管理、告警闭环、回放"
+          },
+          {
+            "index": 2,
+            "text": "追溯、权限审计和运维交付能力的完整业务系统。"
+          }
+        ]
+      },
+      "paragraphs": [
+        {
+          "index": 1,
+          "text": "当前平台已从单一检测Demo升级为具备实时监控、设备管理、告警闭环、回放",
+          "runs": [
+            {
+              "index": 1,
+              "text": "当前平台已从单一检测Demo升级为具备实时监控、设备管理、告警闭环、回放",
+              "fontSize": 24,
+              "typeface": "Microsoft YaHei",
+              "color": "#F3FAFF",
+              "bold": true
+            }
+          ]
+        },
+        {
+          "index": 2,
+          "text": "追溯、权限审计和运维交付能力的完整业务系统。",
+          "runs": [
+            {
+              "index": 1,
+              "text": "追溯、权限审计和运维交付能力的完整业务系统。",
+              "fontSize": 24,
+              "typeface": "Microsoft YaHei",
+              "color": "#F3FAFF",
+              "bold": true
+            }
+          ]
+        }
+      ],
+      "fillColor": "rgba(0, 0, 0, 0)",
+      "lineColor": "rgba(0, 0, 0, 0)",
+      "lineWidth": 0
+    },
+    {
+      "order": 34,
+      "kind": "shape",
+      "scope": "slide",
+      "aid": "sh/29gr2p8n",
+      "id": "34",
+      "bbox": [
+        205,
+        468,
+        870,
+        28
+      ],
+      "geometry": "rect",
+      "text": "让摄像头从被动录像设备，升级为主动发现风险、辅助处置决策的智能安防节点。",
+      "textPreview": "让摄像头从被动录像设备，升级为主动发现风险、辅助处置决策的智能安防节点。",
+      "resolvedFontSize": 19,
+      "resolvedTextStyle": {
+        "fontSize": 19,
+        "typeface": "Microsoft YaHei",
+        "bold": true,
+        "alignment": "center"
+      },
+      "textLayout": {
+        "lineCount": 1,
+        "lines": [
+          {
+            "index": 1,
+            "text": "让摄像头从被动录像设备，升级为主动发现风险、辅助处置决策的智能安防节点。"
+          }
+        ]
+      },
+      "paragraphs": [
+        {
+          "index": 1,
+          "text": "让摄像头从被动录像设备，升级为主动发现风险、辅助处置决策的智能安防节点。",
+          "runs": [
+            {
+              "index": 1,
+              "text": "让摄像头从被动录像设备，升级为主动发现风险、辅助处置决策的智能安防节点。",
+              "fontSize": 19,
+              "typeface": "Microsoft YaHei",
+              "color": "#2EE6FF",
+              "bold": true
+            }
+          ]
+        }
+      ],
+      "fillColor": "rgba(0, 0, 0, 0)",
+      "lineColor": "rgba(0, 0, 0, 0)",
+      "lineWidth": 0
+    },
+    {
+      "order": 35,
+      "kind": "shape",
+      "scope": "slide",
+      "aid": "sh/vu9knih4",
+      "id": "35",
+      "bbox": [
+        48,
+        674,
+        1184,
+        1
+      ],
+      "geometry": "rect",
+      "fillColor": "#143D58",
+      "lineColor": "rgba(0, 0, 0, 0)",
+      "lineWidth": 0
+    },
+    {
+      "order": 36,
+      "kind": "shape",
+      "scope": "slide",
+      "aid": "sh/kf6dcbul",
+      "id": "36",
+      "bbox": [
+        48,
+        686,
+        280,
+        12
+      ],
+      "geometry": "rect",
+      "text": "课程项目答辩 / 商业汇报展示版",
+      "textPreview": "课程项目答辩 / 商业汇报展示版",
+      "resolvedFontSize": 7.51,
+      "resolvedTextStyle": {
+        "fontSize": 7.51,
+        "typeface": "Microsoft YaHei",
+        "alignment": "left"
+      },
+      "textLayout": {
+        "lineCount": 1,
+        "lines": [
+          {
+            "index": 1,
+            "text": "课程项目答辩 / 商业汇报展示版"
+          }
+        ]
+      },
+      "paragraphs": [
+        {
+          "index": 1,
+          "text": "课程项目答辩 / 商业汇报展示版",
+          "runs": [
+            {
+              "index": 1,
+              "text": "课程项目答辩 / 商业汇报展示版",
+              "fontSize": 7.51,
+              "typeface": "Microsoft YaHei",
+              "color": "#7F9AB2"
+            }
+          ]
+        }
+      ],
+      "fillColor": "rgba(0, 0, 0, 0)",
+      "lineColor": "rgba(0, 0, 0, 0)",
+      "lineWidth": 0
+    },
+    {
+      "order": 37,
+      "kind": "shape",
+      "scope": "slide",
+      "aid": "sh/d0z61032",
+      "id": "37",
+      "bbox": [
+        1140,
+        686,
+        90,
+        12
+      ],
+      "geometry": "rect",
+      "text": "2026.05",
+      "textPreview": "2026.05",
+      "resolvedFontSize": 7.51,
+      "resolvedTextStyle": {
+        "fontSize": 7.51,
+        "typeface": "Microsoft YaHei",
+        "alignment": "right"
+      },
+      "textLayout": {
+        "lineCount": 1,
+        "lines": [
+          {
+            "index": 1,
+            "text": "2026.05"
+          }
+        ]
+      },
+      "paragraphs": [
+        {
+          "index": 1,
+          "text": "2026.05",
+          "runs": [
+            {
+              "index": 1,
+              "text": "2026.05",
+              "fontSize": 7.51,
+              "typeface": "Microsoft YaHei",
+              "color": "#7F9AB2"
+            }
+          ]
+        }
+      ],
+      "fillColor": "rgba(0, 0, 0, 0)",
+      "lineColor": "rgba(0, 0, 0, 0)",
+      "lineWidth": 0
+    }
+  ],
+  "composeRuns": []
+}

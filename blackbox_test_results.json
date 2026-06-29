@@ -1,0 +1,171 @@
+﻿{
+    "GeneratedAt":  "2026-05-14 15:25:49",
+    "CameraId":  "cam_fence",
+    "Total":  16,
+    "Passed":  16,
+    "Failed":  0,
+    "AvgHttpMs":  31.15,
+    "MaxHttpMs":  104,
+    "Results":  [
+                    {
+                        "Name":  "健康检查 /health",
+                        "Method":  "GET",
+                        "Url":  "http://127.0.0.1:8000/health",
+                        "Expected":  200,
+                        "Actual":  200,
+                        "Passed":  true,
+                        "TimeMs":  56,
+                        "Note":  "{\"status\":\"ok\",\"time\":\"2026-05-14T07:25:48.573115\",\"revision\":5}"
+                    },
+                    {
+                        "Name":  "运行状态 /runtime/status",
+                        "Method":  "GET",
+                        "Url":  "http://127.0.0.1:8000/runtime/status",
+                        "Expected":  200,
+                        "Actual":  200,
+                        "Passed":  true,
+                        "TimeMs":  23,
+                        "Note":  "{\"engine\":{\"config_revision\":5,\"rule_count\":4,\"scene_count\":2,\"camera_count\":3,\"in_memory_alerts\":0,\"processed_frames\":0,\"total_generated_alerts\":0,\"pending_bou"
+                    },
+                    {
+                        "Name":  "规则配置 /config/rules",
+                        "Method":  "GET",
+                        "Url":  "http://127.0.0.1:8000/config/rules",
+                        "Expected":  200,
+                        "Actual":  200,
+                        "Passed":  true,
+                        "TimeMs":  16,
+                        "Note":  "{\"scenes\":[{\"id\":\"campus_fence\",\"name\":\"å­åºå\u0085é¨å´æ æ£æµ\",\"description\":\"ç¿»è¶å´æ æ£æµ + å´æ æ»çæ£æµ\",\"cameras\":[\"cam_fence\"],\"rule_ids\":[\"f"
+                    },
+                    {
+                        "Name":  "前端首页 index.html",
+                        "Method":  "GET",
+                        "Url":  "http://127.0.0.1:5500/index.html",
+                        "Expected":  200,
+                        "Actual":  200,
+                        "Passed":  true,
+                        "TimeMs":  104,
+                        "Note":  "ï»¿\u003c!DOCTYPE html\u003e\n\u003chtml lang=\"zh-CN\"\u003e\n\u003chead\u003e\n    \u003cmeta charset=\"UTF-8\"\u003e\n    \u003cmeta name=\"viewport\" content=\"width=device-width, initial-scale=1.0\"\u003e\n    \u003ctitle\u003eA"
+                    },
+                    {
+                        "Name":  "调试页 debug.html",
+                        "Method":  "GET",
+                        "Url":  "http://127.0.0.1:5500/debug.html",
+                        "Expected":  200,
+                        "Actual":  200,
+                        "Passed":  true,
+                        "TimeMs":  26,
+                        "Note":  "ï»¿\u003c!DOCTYPE html\u003e\n\u003chtml lang=\"zh-CN\"\u003e\n\u003chead\u003e\n  \u003cmeta charset=\"UTF-8\" /\u003e\n  \u003cmeta name=\"viewport\" content=\"width=device-width, initial-scale=1.0\" /\u003e\n  \u003ctitle\u003eè°"
+                    },
+                    {
+                        "Name":  "调试页包含局域网摄像头控件",
+                        "Method":  "ASSERT",
+                        "Url":  "http://127.0.0.1:5500/debug.html",
+                        "Expected":  "bind/restore/url controls",
+                        "Actual":  true,
+                        "Passed":  true,
+                        "TimeMs":  0,
+                        "Note":  "检查页面控件 id，规避终端中文解码误差"
+                    },
+                    {
+                        "Name":  "调试登录 /debug/login",
+                        "Method":  "POST",
+                        "Url":  "http://127.0.0.1:8000/debug/login",
+                        "Expected":  200,
+                        "Actual":  200,
+                        "Passed":  true,
+                        "TimeMs":  18,
+                        "Note":  "{\"token\":\"M9zj83n5jYVpPu8coteUiYMu1CxyP8Pf\",\"token_type\":\"Bearer\",\"expires_at\":\"2026-05-14T19:25:48.841306\"}"
+                    },
+                    {
+                        "Name":  "Token 校验 /debug/ping",
+                        "Method":  "GET",
+                        "Url":  "http://127.0.0.1:8000/debug/ping",
+                        "Expected":  200,
+                        "Actual":  200,
+                        "Passed":  true,
+                        "TimeMs":  16,
+                        "Note":  "{\"ok\":true,\"message\":\"Debug auth verified\",\"rules\":[\"fence_intrusion\",\"fence_dwell\",\"dock_dwell_person\",\"warehouse_dwell\"],\"tokens_active\":3}"
+                    },
+                    {
+                        "Name":  "非法流地址拒绝 file://",
+                        "Method":  "POST",
+                        "Url":  "http://127.0.0.1:8000/debug/bind-stream?camera_id=cam_fence\u0026stream_url=file%3A%2F%2FC%3A%2Fsecret.mp4",
+                        "Expected":  400,
+                        "Actual":  400,
+                        "Passed":  true,
+                        "TimeMs":  9,
+                        "Note":  ""
+                    },
+                    {
+                        "Name":  "缺失 Token 拒绝绑定",
+                        "Method":  "POST",
+                        "Url":  "http://127.0.0.1:8000/debug/bind-stream?camera_id=cam_fence\u0026stream_url=http%3A%2F%2F192.168.1.23%3A8080%2Fvideo",
+                        "Expected":  401,
+                        "Actual":  401,
+                        "Passed":  true,
+                        "TimeMs":  2,
+                        "Note":  ""
+                    },
+                    {
+                        "Name":  "合法 LAN HTTP 流绑定",
+                        "Method":  "POST",
+                        "Url":  "http://127.0.0.1:8000/debug/bind-stream?camera_id=cam_fence\u0026stream_url=http%3A%2F%2F192.168.1.23%3A8080%2Fvideo",
+                        "Expected":  200,
+                        "Actual":  200,
+                        "Passed":  true,
+                        "TimeMs":  52,
+                        "Note":  "{\"ok\":true,\"camera_id\":\"cam_fence\",\"stream_value\":\"http://192.168.1.23:8080/video\",\"message\":\"å±åç½å®æ¶æåå¤´å°åå·²ç»å®ï¼æå¼å¯¹åºçæ§é¡µå³"
+                    },
+                    {
+                        "Name":  "绑定后读取规则配置",
+                        "Method":  "GET",
+                        "Url":  "http://127.0.0.1:8000/config/rules",
+                        "Expected":  200,
+                        "Actual":  200,
+                        "Passed":  true,
+                        "TimeMs":  16,
+                        "Note":  "{\"scenes\":[{\"id\":\"campus_fence\",\"name\":\"å­åºå\u0085é¨å´æ æ£æµ\",\"description\":\"ç¿»è¶å´æ æ£æµ + å´æ æ»çæ£æµ\",\"cameras\":[\"cam_fence\"],\"rule_ids\":[\"f"
+                    },
+                    {
+                        "Name":  "配置已写入 LAN 流地址",
+                        "Method":  "ASSERT",
+                        "Url":  "http://127.0.0.1:8000/config/rules",
+                        "Expected":  "stream updated",
+                        "Actual":  "http://192.168.1.23:8080/video",
+                        "Passed":  true,
+                        "TimeMs":  0,
+                        "Note":  "验证绑定动作实际生效"
+                    },
+                    {
+                        "Name":  "恢复原始摄像头源",
+                        "Method":  "POST",
+                        "Url":  "http://127.0.0.1:8000/debug/restore-stream?camera_id=cam_fence",
+                        "Expected":  200,
+                        "Actual":  200,
+                        "Passed":  true,
+                        "TimeMs":  51,
+                        "Note":  "{\"ok\":true,\"camera_id\":\"cam_fence\",\"stream_value\":\"camera://0\",\"message\":\"å·²æ¢å¤è¯¥æåå¤´çåå§è§é¢æºã\",\"reload\":{\"ok\":true,\"revision\":7,\"rule_cou"
+                    },
+                    {
+                        "Name":  "恢复后读取规则配置",
+                        "Method":  "GET",
+                        "Url":  "http://127.0.0.1:8000/config/rules",
+                        "Expected":  200,
+                        "Actual":  200,
+                        "Passed":  true,
+                        "TimeMs":  16,
+                        "Note":  "{\"scenes\":[{\"id\":\"campus_fence\",\"name\":\"å­åºå\u0085é¨å´æ æ£æµ\",\"description\":\"ç¿»è¶å´æ æ£æµ + å´æ æ»çæ£æµ\",\"cameras\":[\"cam_fence\"],\"rule_ids\":[\"f"
+                    },
+                    {
+                        "Name":  "配置已恢复原始源",
+                        "Method":  "ASSERT",
+                        "Url":  "http://127.0.0.1:8000/config/rules",
+                        "Expected":  "camera://0",
+                        "Actual":  "camera://0",
+                        "Passed":  true,
+                        "TimeMs":  0,
+                        "Note":  "避免测试污染后续运行"
+                    }
+                ]
+}

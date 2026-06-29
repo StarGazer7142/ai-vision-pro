@@ -1,0 +1,431 @@
+﻿<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>调试联动界面</title>
+  <link rel="preconnect" href="https://fonts.googleapis.com" />
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+  <link href="https://fonts.googleapis.com/css2?family=Noto+Sans+SC:wght@400;500;700&display=swap" rel="stylesheet" />
+  <style>
+    :root {
+      --bg: #061426;
+      --panel: rgba(14, 32, 56, 0.9);
+      --panel-border: rgba(120, 177, 235, 0.26);
+      --text: #eef6ff;
+      --muted: #9bb4d2;
+      --brand: #64d9ff;
+      --ok: #3ad8a5;
+      --danger: #ff8f9c;
+    }
+
+    * {
+      box-sizing: border-box;
+      font-family: "Noto Sans SC", "Segoe UI", sans-serif;
+    }
+
+    body {
+      margin: 0;
+      min-height: 100vh;
+      background:
+        radial-gradient(850px 360px at 12% -12%, rgba(100, 217, 255, 0.14), transparent 58%),
+        linear-gradient(145deg, #061426 0%, #07172c 54%, #061120 100%);
+      color: var(--text);
+      padding: 20px;
+    }
+
+    .container {
+      max-width: 1050px;
+      margin: 0 auto;
+      display: grid;
+      gap: 14px;
+    }
+
+    .panel {
+      border: 1px solid var(--panel-border);
+      border-radius: 14px;
+      background: var(--panel);
+      padding: 14px;
+      box-shadow: 0 18px 42px rgba(2, 10, 20, 0.44);
+    }
+
+    h1, h3 {
+      margin: 0;
+    }
+
+    .muted {
+      color: var(--muted);
+      font-size: 13px;
+      margin-top: 6px;
+    }
+
+    .grid {
+      display: grid;
+      gap: 10px;
+      grid-template-columns: repeat(2, minmax(200px, 1fr));
+      margin-top: 12px;
+    }
+
+    label {
+      font-size: 13px;
+      color: var(--muted);
+      display: block;
+      margin-bottom: 5px;
+    }
+
+    input, select, textarea {
+      width: 100%;
+      border: 1px solid rgba(120, 177, 235, 0.4);
+      border-radius: 8px;
+      background: rgba(6, 23, 42, 0.72);
+      color: var(--text);
+      padding: 8px 10px;
+    }
+
+    textarea {
+      min-height: 70px;
+      resize: vertical;
+    }
+
+    button, .back-link {
+      border: none;
+      border-radius: 9px;
+      background: linear-gradient(120deg, #64d9ff, #2fbce9);
+      color: #042032;
+      font-weight: 700;
+      padding: 9px 14px;
+      cursor: pointer;
+      text-decoration: none;
+      width: fit-content;
+      display: inline-flex;
+      align-items: center;
+    }
+
+    .actions {
+      display: flex;
+      gap: 10px;
+      flex-wrap: wrap;
+      margin-top: 10px;
+    }
+
+    pre {
+      margin: 0;
+      white-space: pre-wrap;
+      word-break: break-word;
+      padding: 12px;
+      border-radius: 10px;
+      border: 1px solid rgba(120, 177, 235, 0.28);
+      background: rgba(4, 17, 32, 0.72);
+      font-size: 12px;
+      color: #d8ecff;
+      max-height: 260px;
+      overflow: auto;
+    }
+
+    .status {
+      border-radius: 999px;
+      font-size: 12px;
+      display: inline-flex;
+      align-items: center;
+      padding: 5px 11px;
+      border: 1px solid rgba(58, 216, 165, 0.4);
+      background: rgba(58, 216, 165, 0.14);
+      color: #b4ffde;
+    }
+
+    .status.offline {
+      border-color: rgba(255, 143, 156, 0.45);
+      background: rgba(255, 143, 156, 0.12);
+      color: #ffd7de;
+    }
+
+    @media (max-width: 840px) {
+      body {
+        padding: 14px;
+      }
+
+      .grid {
+        grid-template-columns: 1fr;
+      }
+    }
+  </style>
+</head>
+<body>
+  <div class="container">
+    <section class="panel">
+      <h1>前后端联动调试页</h1>
+      <div class="muted">本页用于调试账号密码鉴权、手动注入事件、验证信号接口是否正常联动。</div>
+      <div style="margin-top:10px; display:flex; gap:8px; align-items:center; flex-wrap:wrap;">
+        <span id="status" class="status">后端检查中...</span>
+        <a class="back-link" href="index.html">返回首页</a>
+      </div>
+    </section>
+
+    <section class="panel">
+      <h3>1. 调试登录</h3>
+      <div class="muted">账号密码由后端环境变量 <code>DEBUG_USERNAME</code> / <code>DEBUG_PASSWORD</code> 配置</div>
+      <div class="grid">
+        <div>
+          <label for="username">账号</label>
+          <input id="username" placeholder="输入调试账号" />
+        </div>
+        <div>
+          <label for="password">密码</label>
+          <input id="password" type="password" placeholder="输入调试密码" />
+        </div>
+      </div>
+      <div class="actions">
+        <button id="login-btn">登录获取 Token</button>
+        <button id="ping-btn">验证 Token</button>
+      </div>
+    </section>
+
+    <section class="panel">
+      <h3>1.5 本地视频上传并绑定摄像头</h3>
+      <div class="muted">上传接口：<code>POST /debug/upload-video?camera_id=...</code>（需 Bearer Token）。上传后会自动修改摄像头 stream 并热重载配置。</div>
+      <div class="grid">
+        <div>
+          <label for="upload-camera-id">摄像头ID</label>
+          <select id="upload-camera-id"></select>
+        </div>
+        <div>
+          <label for="upload-video-file">视频文件</label>
+          <input id="upload-video-file" type="file" accept=".mp4,.avi,.mov,.mkv,.webm" />
+        </div>
+      </div>
+      <div class="actions">
+        <button id="upload-video-btn">上传并绑定</button>
+      </div>
+    </section>
+
+    <section class="panel">
+      <h3>2. 手动注入调试事件</h3>
+      <div class="grid">
+        <div>
+          <label for="rule-id">规则ID</label>
+          <select id="rule-id"></select>
+        </div>
+        <div>
+          <label for="count">人数/次数</label>
+          <input id="count" type="number" min="0" max="100" value="1" />
+        </div>
+      </div>
+      <div style="margin-top:10px;">
+        <label for="msg">事件说明</label>
+        <textarea id="msg">[调试] 模拟触发事件</textarea>
+      </div>
+      <div class="actions">
+        <button id="simulate-btn">注入事件</button>
+        <button id="refresh-signals-btn">刷新信号快照</button>
+        <button id="reload-config-btn">重载规则配置</button>
+        <button id="runtime-btn">查看运行状态</button>
+      </div>
+    </section>
+
+    <section class="panel">
+      <h3>3. 接口返回</h3>
+      <div class="muted">包含登录、注入、信号查询结果</div>
+      <pre id="output">等待操作...</pre>
+    </section>
+  </div>
+
+  <script>
+    const API_BASE = window.location.port === "8000" ? "" : window.location.protocol + "//" + window.location.hostname + ":8000";
+
+    const statusEl = document.getElementById("status");
+    const outputEl = document.getElementById("output");
+    const usernameEl = document.getElementById("username");
+    const passwordEl = document.getElementById("password");
+    const loginBtn = document.getElementById("login-btn");
+    const pingBtn = document.getElementById("ping-btn");
+    const uploadCameraEl = document.getElementById("upload-camera-id");
+    const uploadVideoFileEl = document.getElementById("upload-video-file");
+    const uploadVideoBtn = document.getElementById("upload-video-btn");
+    const ruleSelectEl = document.getElementById("rule-id");
+    const countEl = document.getElementById("count");
+    const msgEl = document.getElementById("msg");
+    const simulateBtn = document.getElementById("simulate-btn");
+    const refreshSignalsBtn = document.getElementById("refresh-signals-btn");
+    const reloadConfigBtn = document.getElementById("reload-config-btn");
+    const runtimeBtn = document.getElementById("runtime-btn");
+
+    let token = "";
+
+    function writeOutput(title, data) {
+      outputEl.textContent = `${title}\n${JSON.stringify(data, null, 2)}`;
+    }
+
+    function setStatus(text, online = true) {
+      statusEl.textContent = text;
+      statusEl.classList.toggle("offline", !online);
+    }
+
+// --- 修改后的代码 ---
+    async function checkBackend() {
+      try {
+        // 🔴 改为请求一个真实存在的后端接口
+        const res = await fetch(`${API_BASE}/runtime/status`);
+        if (!res.ok) throw new Error("health fail");
+        setStatus(`后端在线: FastAPI`, true);
+      } catch {
+        setStatus("后端离线", false);
+      }
+    }
+
+    async function loadRules() {
+      try {
+        const res = await fetch(`${API_BASE}/config/rules`);
+        if (!res.ok) throw new Error("load rules failed");
+        const data = await res.json();
+        const rules = data.rules || [];
+        const cameras = data.cameras || [];
+
+        ruleSelectEl.innerHTML = "";
+        rules.forEach(rule => {
+          const option = document.createElement("option");
+          option.value = rule.id;
+          option.textContent = `${rule.id} · ${rule.desc || rule.type}`;
+          ruleSelectEl.appendChild(option);
+        });
+
+        uploadCameraEl.innerHTML = "";
+        cameras.forEach(camera => {
+          const option = document.createElement("option");
+          option.value = camera.id;
+          option.textContent = `${camera.id} · ${camera.name || "camera"}`;
+          uploadCameraEl.appendChild(option);
+        });
+      } catch (error) {
+        writeOutput("加载规则失败", { error: String(error?.message || error) });
+      }
+    }
+
+    async function login() {
+      try {
+        const res = await fetch(`${API_BASE}/debug/login`, {
+          method: "POST",
+          headers: { "Content-Type": "application/json" },
+          body: JSON.stringify({
+            username: usernameEl.value,
+            password: passwordEl.value
+          })
+        });
+        const data = await res.json();
+        if (!res.ok) throw new Error(data.detail || "login failed");
+        token = data.token;
+        writeOutput("登录成功", data);
+      } catch (error) {
+        writeOutput("登录失败", { error: String(error?.message || error) });
+      }
+    }
+
+    async function ping() {
+      try {
+        if (!token) throw new Error("请先登录获取 token");
+        const res = await fetch(`${API_BASE}/debug/ping`, {
+          headers: { Authorization: `Bearer ${token}` }
+        });
+        const data = await res.json();
+        if (!res.ok) throw new Error(data.detail || "ping failed");
+        writeOutput("Token 验证成功", data);
+      } catch (error) {
+        writeOutput("Token 验证失败", { error: String(error?.message || error) });
+      }
+    }
+
+    async function simulate() {
+      try {
+        if (!token) throw new Error("请先登录获取 token");
+        const res = await fetch(`${API_BASE}/debug/simulate`, {
+          method: "POST",
+          headers: {
+            "Content-Type": "application/json",
+            Authorization: `Bearer ${token}`
+          },
+          body: JSON.stringify({
+            rule_id: ruleSelectEl.value,
+            count: Number(countEl.value || 0),
+            message: msgEl.value
+          })
+        });
+        const data = await res.json();
+        if (!res.ok) throw new Error(data.detail || "simulate failed");
+        writeOutput("注入事件成功", data);
+      } catch (error) {
+        writeOutput("注入事件失败", { error: String(error?.message || error) });
+      }
+    }
+
+    async function uploadVideo() {
+      try {
+        if (!token) throw new Error("请先登录获取 token");
+        if (!uploadCameraEl.value) throw new Error("请选择摄像头ID");
+        const file = uploadVideoFileEl.files && uploadVideoFileEl.files[0];
+        if (!file) throw new Error("请先选择本地视频文件");
+
+        const form = new FormData();
+        form.append("file", file);
+
+        const res = await fetch(`${API_BASE}/debug/upload-video?camera_id=${encodeURIComponent(uploadCameraEl.value)}`, {
+          method: "POST",
+          headers: { Authorization: `Bearer ${token}` },
+          body: form
+        });
+        const data = await res.json();
+        if (!res.ok) throw new Error(data.detail || "upload failed");
+        writeOutput("上传并绑定成功", data);
+      } catch (error) {
+        writeOutput("上传并绑定失败", { error: String(error?.message || error) });
+      }
+    }
+
+    async function refreshSignals() {
+      try {
+        const res = await fetch(`${API_BASE}/signals/scenes`);
+        const data = await res.json();
+        if (!res.ok) throw new Error(data.detail || "signal failed");
+        writeOutput("当前场景信号快照", data);
+      } catch (error) {
+        writeOutput("刷新信号失败", { error: String(error?.message || error) });
+      }
+    }
+
+    async function reloadConfig() {
+      try {
+        if (!token) throw new Error("请先登录获取 token");
+        const res = await fetch(`${API_BASE}/config/reload`, {
+          method: "POST",
+          headers: { Authorization: `Bearer ${token}` }
+        });
+        const data = await res.json();
+        if (!res.ok) throw new Error(data.detail || "reload failed");
+        writeOutput("重载配置成功", data);
+      } catch (error) {
+        writeOutput("重载配置失败", { error: String(error?.message || error) });
+      }
+    }
+
+    async function getRuntimeStatus() {
+      try {
+        const res = await fetch(`${API_BASE}/runtime/status`);
+        const data = await res.json();
+        if (!res.ok) throw new Error(data.detail || "runtime failed");
+        writeOutput("当前运行状态", data);
+      } catch (error) {
+        writeOutput("获取运行状态失败", { error: String(error?.message || error) });
+      }
+    }
+
+    loginBtn.addEventListener("click", login);
+    pingBtn.addEventListener("click", ping);
+    uploadVideoBtn.addEventListener("click", uploadVideo);
+    simulateBtn.addEventListener("click", simulate);
+    refreshSignalsBtn.addEventListener("click", refreshSignals);
+    reloadConfigBtn.addEventListener("click", reloadConfig);
+    runtimeBtn.addEventListener("click", getRuntimeStatus);
+
+    checkBackend();
+    loadRules();
+  </script>
+</body>
+</html>

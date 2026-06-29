@@ -1,0 +1,43 @@
+﻿{
+    "GeneratedAt":  "2026-05-14 16:29:00",
+    "Total":  7,
+    "Passed":  7,
+    "Failed":  0,
+    "Results":  [
+                    {
+                        "Name":  "正式登录体系",
+                        "Passed":  true,
+                        "Note":  "admin 登录成功并返回 token"
+                    },
+                    {
+                        "Name":  "角色用户列表",
+                        "Passed":  true,
+                        "Note":  "users ok"
+                    },
+                    {
+                        "Name":  "创建值班人员",
+                        "Passed":  true,
+                        "Note":  "created"
+                    },
+                    {
+                        "Name":  "设备管理列表",
+                        "Passed":  true,
+                        "Note":  "devices ok"
+                    },
+                    {
+                        "Name":  "系统设置读取",
+                        "Passed":  true,
+                        "Note":  "settings ok"
+                    },
+                    {
+                        "Name":  "系统设置保存",
+                        "Passed":  true,
+                        "Note":  "settings saved"
+                    },
+                    {
+                        "Name":  "操作审计查询",
+                        "Passed":  true,
+                        "Note":  "logs ok"
+                    }
+                ]
+}

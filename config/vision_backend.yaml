@@ -1,0 +1,21 @@
+default_backend: yolo
+active_backend: yolo
+scene_overrides: {}
+camera_overrides:
+  cam_fence: yolo
+  cam_warehouse: video_understanding
+backends:
+  yolo:
+    label: 方案一：YOLO目标检测
+    pipeline: object_detection
+    preview_boxes: true
+  video_understanding:
+    label: 方案二：视频理解模型
+    pipeline: semantic_video_understanding
+    provider_mode: mock_local
+    api_url: ''
+    model: ''
+    timeout_seconds: 12.0
+    sample_stride: 12
+    preview_boxes: true
+    clip_provider: mimo_video

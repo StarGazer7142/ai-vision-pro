@@ -1,0 +1,1051 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>事件回看中心</title>
+  <link rel="preconnect" href="https://fonts.googleapis.com" />
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+  <link href="https://fonts.googleapis.com/css2?family=Noto+Sans+SC:wght@400;500;700&display=swap" rel="stylesheet" />
+  <style>
+    :root {
+      --bg: #061224;
+      --panel: rgba(12, 31, 56, 0.9);
+      --border: rgba(116, 172, 233, 0.3);
+      --text: #edf6ff;
+      --muted: #97aec9;
+      --link: #8ee5ff;
+      --btn: #5cd5ff;
+      --success: #67e8a7;
+      --warning: #f5c842;
+      --error: #ff6b6b;
+    }
+    * { box-sizing: border-box; font-family: "Noto Sans SC", "Segoe UI", sans-serif; }
+    body {
+      margin: 0;
+      min-height: 100vh;
+      color: var(--text);
+      background:
+        radial-gradient(900px 420px at 0% -20%, rgba(92, 213, 255, 0.15), transparent 60%),
+        linear-gradient(145deg, #061224 0%, #07172e 55%, #04101f 100%);
+      padding: 20px;
+    }
+    .container { max-width: 1180px; margin: 0 auto; display: grid; gap: 14px; }
+    .panel {
+      border: 1px solid var(--border);
+      border-radius: 14px;
+      background: var(--panel);
+      padding: 14px;
+      box-shadow: 0 16px 40px rgba(2, 8, 18, 0.45);
+    }
+    h1, h2 { margin: 0; }
+    .muted { color: var(--muted); font-size: 13px; margin-top: 5px; line-height: 1.65; }
+    .meta-grid { margin-top: 12px; display: grid; gap: 10px; grid-template-columns: repeat(auto-fit, minmax(220px, 1fr)); }
+    .meta-card { border: 1px solid rgba(116, 172, 233, 0.25); border-radius: 10px; padding: 10px; background: rgba(7, 20, 36, 0.7); }
+    .meta-label { color: var(--muted); font-size: 12px; }
+    .meta-value { margin-top: 6px; font-size: 14px; word-break: break-all; }
+    .meta-value.success { color: var(--success); }
+    .meta-value.warning { color: var(--warning); }
+    .meta-value.error { color: var(--error); }
+    .actions { margin-top: 12px; display: flex; gap: 10px; flex-wrap: wrap; }
+    .btn {
+      text-decoration: none;
+      border: none;
+      border-radius: 9px;
+      padding: 8px 13px;
+      background: linear-gradient(120deg, var(--btn), #2bbde8);
+      color: #032033;
+      font-weight: 700;
+      cursor: pointer;
+      display: inline-flex;
+      align-items: center;
+      gap: 6px;
+    }
+    .btn.secondary {
+      background: rgba(116, 172, 233, 0.16);
+      border: 1px solid rgba(116, 172, 233, 0.35);
+      color: #d0e8ff;
+      font-weight: 500;
+    }
+    .btn:disabled {
+      opacity: 0.55;
+      cursor: not-allowed;
+    }
+    .file-list { margin-top: 10px; border: 1px solid rgba(116, 172, 233, 0.24); border-radius: 10px; overflow: hidden; }
+    .file-row { display: grid; grid-template-columns: 1fr 110px 170px 200px; gap: 10px; align-items: center; padding: 10px 12px; border-bottom: 1px solid rgba(116, 172, 233, 0.16); font-size: 13px; }
+    .file-row.header { background: rgba(10, 25, 44, 0.85); font-weight: 700; }
+    .file-row:last-child { border-bottom: none; }
+    .file-name { color: var(--link); text-decoration: none; }
+    .file-actions { display: flex; gap: 8px; flex-wrap: wrap; }
+    .mini-btn {
+      border-radius: 8px;
+      border: 1px solid rgba(116, 172, 233, 0.35);
+      background: rgba(116, 172, 233, 0.12);
+      color: #cfe9ff;
+      font-size: 12px;
+      padding: 5px 9px;
+      cursor: pointer;
+      text-decoration: none;
+    }
+    .video-wrap {
+      margin-top: 10px;
+      border: 1px solid rgba(116, 172, 233, 0.24);
+      border-radius: 10px;
+      background: rgba(7, 20, 36, 0.7);
+      padding: 10px;
+    }
+    .video-stage {
+      position: relative;
+      width: 100%;
+      background: #02060f;
+      border-radius: 8px;
+      overflow: hidden;
+    }
+    #replay-player {
+      width: 100%;
+      max-height: 520px;
+      background: #02060f;
+      border-radius: 8px;
+      display: block;
+    }
+    #replay-overlay {
+      position: absolute;
+      inset: 0;
+      width: 100%;
+      height: 100%;
+      pointer-events: none;
+    }
+    .empty { padding: 14px; color: var(--muted); }
+    .progress-bar {
+      width: 100%;
+      height: 4px;
+      background: rgba(116, 172, 233, 0.2);
+      border-radius: 2px;
+      overflow: hidden;
+      margin-top: 8px;
+    }
+    .progress-fill {
+      height: 100%;
+      background: linear-gradient(90deg, var(--btn), #2bbde8);
+      width: 0%;
+      transition: width 0.3s ease;
+    }
+    .timeline-marker {
+      position: relative;
+      margin-top: 10px;
+      padding: 8px;
+      background: rgba(7, 20, 36, 0.8);
+      border-radius: 8px;
+    }
+    .timeline-bar {
+      height: 8px;
+      background: rgba(116, 172, 233, 0.2);
+      border-radius: 4px;
+      position: relative;
+    }
+    .timeline-played {
+      height: 100%;
+      background: var(--btn);
+      border-radius: 4px;
+    }
+    .timeline-event {
+      position: absolute;
+      top: -4px;
+      width: 16px;
+      height: 16px;
+      background: var(--error);
+      border-radius: 50%;
+      transform: translateX(-50%);
+      border: 2px solid white;
+      box-shadow: 0 0 8px rgba(255, 107, 107, 0.5);
+      cursor: pointer;
+      z-index: 10;
+    }
+    .timeline-event:hover::after {
+      content: "事件发生点";
+      position: absolute;
+      bottom: 100%;
+      left: 50%;
+      transform: translateX(-50%);
+      padding: 4px 8px;
+      background: rgba(0, 0, 0, 0.8);
+      border-radius: 4px;
+      font-size: 12px;
+      white-space: nowrap;
+      margin-bottom: 4px;
+    }
+    .clip-options {
+      display: flex;
+      gap: 15px;
+      flex-wrap: wrap;
+      margin-top: 10px;
+      align-items: center;
+    }
+    .clip-option {
+      display: flex;
+      align-items: center;
+      gap: 8px;
+    }
+    .clip-option label {
+      font-size: 13px;
+      color: var(--muted);
+    }
+    .clip-option input {
+      width: 70px;
+      padding: 4px 8px;
+      border: 1px solid rgba(116, 172, 233, 0.35);
+      border-radius: 6px;
+      background: rgba(7, 20, 36, 0.7);
+      color: var(--text);
+      font-size: 13px;
+    }
+    .replay-info {
+      margin-top: 12px;
+      padding: 12px;
+      background: rgba(7, 20, 36, 0.7);
+      border-radius: 10px;
+      border-left: 3px solid var(--btn);
+    }
+    .replay-info h3 {
+      margin: 0 0 8px 0;
+      font-size: 14px;
+      color: var(--link);
+    }
+    .replay-info p {
+      margin: 4px 0;
+      font-size: 13px;
+      color: var(--muted);
+    }
+    .replay-info p strong {
+      color: var(--text);
+    }
+    .analysis-panel {
+      margin-top: 12px;
+      padding: 14px;
+      background: rgba(7, 20, 36, 0.7);
+      border-radius: 10px;
+      border-left: 3px solid var(--success);
+    }
+    .analysis-panel h3 {
+      margin: 0 0 10px 0;
+      font-size: 14px;
+      color: var(--success);
+    }
+    .analysis-summary {
+      font-size: 14px;
+      color: var(--text);
+      line-height: 1.7;
+      margin-bottom: 12px;
+    }
+    .analysis-grid {
+      display: grid;
+      gap: 10px;
+      grid-template-columns: repeat(auto-fit, minmax(220px, 1fr));
+    }
+    .analysis-card {
+      border: 1px solid rgba(116, 172, 233, 0.18);
+      border-radius: 10px;
+      background: rgba(4, 15, 28, 0.75);
+      padding: 12px;
+    }
+    .analysis-card strong {
+      display: block;
+      font-size: 12px;
+      color: var(--link);
+      margin-bottom: 8px;
+      text-transform: uppercase;
+      letter-spacing: 0.04em;
+    }
+    .analysis-card ul {
+      margin: 0;
+      padding-left: 18px;
+      color: var(--muted);
+      font-size: 13px;
+      line-height: 1.65;
+    }
+    .analysis-card li + li {
+      margin-top: 6px;
+    }
+    .toast-stack {
+      position: fixed;
+      top: 18px;
+      right: 18px;
+      z-index: 1000;
+      display: grid;
+      gap: 10px;
+      max-width: min(360px, calc(100vw - 28px));
+    }
+    .toast {
+      border: 1px solid rgba(116, 172, 233, 0.28);
+      border-left: 4px solid var(--btn);
+      border-radius: 10px;
+      background: rgba(6, 18, 36, 0.96);
+      color: var(--text);
+      padding: 10px 12px;
+      box-shadow: 0 14px 32px rgba(2, 8, 18, 0.38);
+      line-height: 1.5;
+      font-size: 13px;
+    }
+    .toast.error { border-left-color: var(--error); }
+    .toast.success { border-left-color: var(--success); }
+    .toast.warning { border-left-color: var(--warning); }
+    @media (max-width: 820px) {
+      .file-row { grid-template-columns: 1fr; }
+      .toast-stack {
+        top: 10px;
+        right: 10px;
+        left: 10px;
+        max-width: none;
+      }
+    }
+  </style>
+</head>
+<body>
+  <div id="replay-toast-stack" class="toast-stack" aria-live="polite"></div>
+  <div class="container">
+    <section class="panel">
+      <h1>事件回看中心</h1>
+      <p class="muted">根据事件时间戳自动定位回看目录和最接近的录像文件。既支持直接打开本地目录，也支持播放器定位和生成事件片段。</p>
+
+      <div class="meta-grid">
+        <div class="meta-card">
+          <div class="meta-label">摄像头ID</div>
+          <div class="meta-value" id="camera-id">-</div>
+        </div>
+        <div class="meta-card">
+          <div class="meta-label">场景ID</div>
+          <div class="meta-value" id="scene-id">-</div>
+        </div>
+        <div class="meta-card">
+          <div class="meta-label">规则ID</div>
+          <div class="meta-value" id="rule-id">-</div>
+        </div>
+        <div class="meta-card">
+          <div class="meta-label">事件时间戳</div>
+          <div class="meta-value" id="event-timestamp">-</div>
+        </div>
+        <div class="meta-card">
+          <div class="meta-label">回看目录</div>
+          <div class="meta-value" id="replay-dir">-</div>
+        </div>
+        <div class="meta-card">
+          <div class="meta-label">目录状态</div>
+          <div class="meta-value" id="dir-status">-</div>
+        </div>
+        <div class="meta-card">
+          <div class="meta-label">视频来源</div>
+          <div class="meta-value" id="source-origin">-</div>
+        </div>
+        <div class="meta-card">
+          <div class="meta-label">片段裁剪能力</div>
+          <div class="meta-value" id="clip-capability">-</div>
+        </div>
+      </div>
+
+      <div class="actions">
+        <button id="refresh-replay" class="btn" type="button">刷新回放信息</button>
+        <button id="analyze-replay" class="btn" type="button">分析短视频</button>
+        <a id="open-folder" class="btn secondary" href="#" target="_blank" rel="noopener noreferrer">打开本地回看目录</a>
+        <button id="copy-path" class="btn secondary" type="button">复制目录路径</button>
+        <a class="btn secondary" href="javascript:history.back()">返回上一页</a>
+      </div>
+    </section>
+
+    <section class="panel">
+      <h2>事件回放定位</h2>
+      <div id="replay-info" class="replay-info" style="display: none;">
+        <h3>定位结果</h3>
+        <p><strong>视频文件：</strong><span id="found-video">-</span></p>
+        <p><strong>视频时长：</strong><span id="video-duration">-</span></p>
+        <p><strong>事件偏移：</strong><span id="event-offset">-</span></p>
+        <p><strong>建议起始：</strong><span id="suggested-start">-</span></p>
+        <p><strong>来源提醒：</strong><span id="source-warning">-</span></p>
+      </div>
+      <div id="replay-info-empty" class="empty">点击“刷新回放信息”获取事件录像定位结果。</div>
+      <div id="analysis-panel" class="analysis-panel" style="display: none;">
+        <h3>MiMo 视频分析结果</h3>
+        <div id="analysis-summary" class="analysis-summary">-</div>
+        <div id="analysis-meta" class="muted" style="margin-bottom: 10px;"></div>
+        <div id="analysis-grid" class="analysis-grid"></div>
+      </div>
+      <div id="analysis-empty" class="empty">当前事件还没有视频分析结果，可点击“分析短视频”生成并自动入库。</div>
+    </section>
+
+    <section class="panel">
+      <h2>目录文件列表</h2>
+      <div id="file-list" class="file-list"></div>
+    </section>
+
+    <section class="panel">
+      <div style="display: flex; justify-content: space-between; align-items: center; gap: 12px; flex-wrap: wrap;">
+        <div>
+          <h2>事件回看播放器</h2>
+          <p id="player-tip" class="muted">选择文件后可直接播放完整录像，或生成事件回放片段。</p>
+        </div>
+        <div class="clip-options">
+          <div class="clip-option">
+            <label for="clip-before">事件前(秒):</label>
+            <input type="number" id="clip-before" value="4" min="4" max="4" readonly />
+          </div>
+          <div class="clip-option">
+            <label for="clip-after">事件后(秒):</label>
+            <input type="number" id="clip-after" value="4" min="4" max="4" readonly />
+          </div>
+          <button id="generate-clip" class="btn" type="button" disabled>生成回放片段</button>
+        </div>
+      </div>
+
+      <div class="video-wrap">
+        <div class="video-stage">
+          <video id="replay-player" controls preload="metadata"></video>
+          <canvas id="replay-overlay"></canvas>
+        </div>
+
+        <div id="timeline-container" style="display: none;">
+          <div class="timeline-marker">
+            <div class="timeline-bar">
+              <div class="timeline-played" id="timeline-played"></div>
+              <div class="timeline-event" id="timeline-event" style="display: none;"></div>
+            </div>
+            <div style="display: flex; justify-content: space-between; margin-top: 6px; font-size: 12px; color: var(--muted);">
+              <span id="time-start">00:00</span>
+              <span><strong>事件点</strong></span>
+              <span id="time-end">00:00</span>
+            </div>
+          </div>
+        </div>
+      </div>
+
+      <div id="clip-progress" style="display: none; margin-top: 10px;">
+        <div style="display: flex; align-items: center; gap: 8px; margin-bottom: 4px;">
+          <span class="muted" style="font-size: 13px;">正在生成回放片段...</span>
+          <span id="clip-percent">0%</span>
+        </div>
+        <div class="progress-bar">
+          <div class="progress-fill" id="clip-progress-fill"></div>
+        </div>
+      </div>
+    </section>
+  </div>
+
+  <script>
+    const API_BASE = window.location.port === "8000" ? "" : window.location.protocol + "//" + window.location.hostname + ":8000";
+    const DEFAULT_CLIP_BEFORE = 4;
+    const DEFAULT_CLIP_AFTER = 4;
+    const OVERLAY_FETCH_INTERVAL_MS = 800;
+
+    const params = new URLSearchParams(window.location.search);
+    const cameraId = params.get("camera_id") || "";
+    const timestamp = params.get("timestamp") || "";
+    const sceneId = params.get("scene_id") || "";
+    const ruleId = params.get("rule_id") || "";
+
+    const cameraEl = document.getElementById("camera-id");
+    const sceneEl = document.getElementById("scene-id");
+    const ruleEl = document.getElementById("rule-id");
+    const tsEl = document.getElementById("event-timestamp");
+    const dirEl = document.getElementById("replay-dir");
+    const statusEl = document.getElementById("dir-status");
+    const sourceOriginEl = document.getElementById("source-origin");
+    const clipCapabilityEl = document.getElementById("clip-capability");
+    const openFolderEl = document.getElementById("open-folder");
+    const copyBtn = document.getElementById("copy-path");
+    const refreshBtn = document.getElementById("refresh-replay");
+    const analyzeReplayBtn = document.getElementById("analyze-replay");
+    const generateClipBtn = document.getElementById("generate-clip");
+    const clipBeforeEl = document.getElementById("clip-before");
+    const clipAfterEl = document.getElementById("clip-after");
+    const fileListEl = document.getElementById("file-list");
+    const replayPlayerEl = document.getElementById("replay-player");
+    const replayOverlayEl = document.getElementById("replay-overlay");
+    const replayOverlayCtx = replayOverlayEl.getContext("2d");
+    const playerTipEl = document.getElementById("player-tip");
+    const replayInfoEl = document.getElementById("replay-info");
+    const replayInfoEmptyEl = document.getElementById("replay-info-empty");
+    const analysisPanelEl = document.getElementById("analysis-panel");
+    const analysisSummaryEl = document.getElementById("analysis-summary");
+    const analysisMetaEl = document.getElementById("analysis-meta");
+    const analysisGridEl = document.getElementById("analysis-grid");
+    const analysisEmptyEl = document.getElementById("analysis-empty");
+    const foundVideoEl = document.getElementById("found-video");
+    const videoDurationEl = document.getElementById("video-duration");
+    const eventOffsetEl = document.getElementById("event-offset");
+    const suggestedStartEl = document.getElementById("suggested-start");
+    const sourceWarningEl = document.getElementById("source-warning");
+    const timelineContainer = document.getElementById("timeline-container");
+    const timelinePlayedEl = document.getElementById("timeline-played");
+    const timelineEventEl = document.getElementById("timeline-event");
+    const timeStartEl = document.getElementById("time-start");
+    const timeEndEl = document.getElementById("time-end");
+    const clipProgressEl = document.getElementById("clip-progress");
+    const clipPercentEl = document.getElementById("clip-percent");
+    const clipProgressFillEl = document.getElementById("clip-progress-fill");
+
+    let replayDir = "";
+    let replayInfo = null;
+    let eventPosition = 0;
+    let replayAnalysis = null;
+    let currentPlaybackBaseOffset = 0;
+    let lastOverlayFetchAt = 0;
+    let overlayRequestSeq = 0;
+    let latestOverlayPayload = null;
+    const autoOpenFolder = window.location.hash === "#folder";
+
+    function showReplayToast(message, tone = "error") {
+      const stack = document.getElementById("replay-toast-stack");
+      if (!stack) return;
+      const toast = document.createElement("div");
+      toast.className = `toast ${tone}`;
+      toast.textContent = message;
+      stack.appendChild(toast);
+      setTimeout(() => {
+        toast.style.opacity = "0";
+        toast.style.transform = "translateY(-6px)";
+      }, 2800);
+      setTimeout(() => toast.remove(), 3400);
+    }
+
+    function escapeHtml(value = "") {
+      return String(value)
+        .replace(/&/g, "&amp;")
+        .replace(/</g, "&lt;")
+        .replace(/>/g, "&gt;")
+        .replace(/"/g, "&quot;")
+        .replace(/'/g, "&#39;");
+    }
+
+    function parseBackendDateTime(value = "") {
+      const raw = String(value || "").trim();
+      if (!raw) return null;
+      const normalized = /^\d{4}-\d{2}-\d{2}T\d{2}:\d{2}:\d{2}(?:\.\d+)?$/.test(raw) ? `${raw}Z` : raw;
+      const parsed = new Date(normalized);
+      return Number.isNaN(parsed.getTime()) ? null : parsed;
+    }
+
+    function formatBrowserDateTime(value = "", fallback = "-") {
+      const parsed = parseBackendDateTime(value);
+      if (!parsed) return fallback;
+      return parsed.toLocaleString("zh-CN", {
+        year: "numeric",
+        month: "2-digit",
+        day: "2-digit",
+        hour: "2-digit",
+        minute: "2-digit",
+        second: "2-digit",
+        hour12: false,
+      }).replace(/\//g, "-");
+    }
+
+    function formatSeconds(seconds) {
+      const n = Number(seconds || 0);
+      const h = Math.floor(n / 3600);
+      const m = Math.floor((n % 3600) / 60);
+      const s = Math.floor(n % 60);
+      if (h > 0) {
+        return `${h}:${m.toString().padStart(2, "0")}:${s.toString().padStart(2, "0")}`;
+      }
+      return `${m.toString().padStart(2, "0")}:${s.toString().padStart(2, "0")}`;
+    }
+
+    function formatBytes(bytes) {
+      const n = Number(bytes || 0);
+      if (n < 1024) return `${n} B`;
+      if (n < 1024 * 1024) return `${(n / 1024).toFixed(1)} KB`;
+      if (n < 1024 * 1024 * 1024) return `${(n / (1024 * 1024)).toFixed(1)} MB`;
+      return `${(n / (1024 * 1024 * 1024)).toFixed(2)} GB`;
+    }
+
+    function setStatusTone(message, tone = "normal") {
+      statusEl.textContent = message;
+      statusEl.className = "meta-value";
+      if (tone === "success") statusEl.classList.add("success");
+      if (tone === "warning") statusEl.classList.add("warning");
+      if (tone === "error") statusEl.classList.add("error");
+    }
+
+    function resizeOverlayCanvas() {
+      const rect = replayPlayerEl.getBoundingClientRect();
+      const width = Math.max(1, Math.round(rect.width));
+      const height = Math.max(1, Math.round(rect.height));
+      if (replayOverlayEl.width !== width) replayOverlayEl.width = width;
+      if (replayOverlayEl.height !== height) replayOverlayEl.height = height;
+    }
+
+    function clearOverlay() {
+      resizeOverlayCanvas();
+      replayOverlayCtx.clearRect(0, 0, replayOverlayEl.width, replayOverlayEl.height);
+    }
+
+    function videoDrawArea(frameWidth, frameHeight) {
+      const canvasWidth = replayOverlayEl.width;
+      const canvasHeight = replayOverlayEl.height;
+      const sourceWidth = Number(frameWidth || replayPlayerEl.videoWidth || 0);
+      const sourceHeight = Number(frameHeight || replayPlayerEl.videoHeight || 0);
+      if (!sourceWidth || !sourceHeight || !canvasWidth || !canvasHeight) {
+        return { x: 0, y: 0, width: canvasWidth, height: canvasHeight, scaleX: 1, scaleY: 1 };
+      }
+      const scale = Math.min(canvasWidth / sourceWidth, canvasHeight / sourceHeight);
+      const width = sourceWidth * scale;
+      const height = sourceHeight * scale;
+      return {
+        x: (canvasWidth - width) / 2,
+        y: (canvasHeight - height) / 2,
+        width,
+        height,
+        scaleX: width / sourceWidth,
+        scaleY: height / sourceHeight,
+      };
+    }
+
+    function drawOverlay(payload) {
+      resizeOverlayCanvas();
+      replayOverlayCtx.clearRect(0, 0, replayOverlayEl.width, replayOverlayEl.height);
+      const detections = Array.isArray(payload?.detections) ? payload.detections : [];
+      if (!detections.length) return;
+
+      const area = videoDrawArea(payload.frame_width, payload.frame_height);
+      replayOverlayCtx.save();
+      replayOverlayCtx.lineWidth = 2;
+      replayOverlayCtx.font = "13px Noto Sans SC, Segoe UI, sans-serif";
+      replayOverlayCtx.textBaseline = "top";
+
+      detections.forEach((det) => {
+        const box = det.bbox || {};
+        const x1 = area.x + Number(box.x1 || 0) * area.scaleX;
+        const y1 = area.y + Number(box.y1 || 0) * area.scaleY;
+        const x2 = area.x + Number(box.x2 || 0) * area.scaleX;
+        const y2 = area.y + Number(box.y2 || 0) * area.scaleY;
+        const width = Math.max(1, x2 - x1);
+        const height = Math.max(1, y2 - y1);
+        const label = `${det.display_category || det.category || "object"} ${Number(det.confidence || 0).toFixed(2)}`;
+
+        replayOverlayCtx.strokeStyle = "rgba(94, 234, 212, 0.96)";
+        replayOverlayCtx.fillStyle = "rgba(6, 18, 32, 0.72)";
+        replayOverlayCtx.strokeRect(x1, y1, width, height);
+
+        const metrics = replayOverlayCtx.measureText(label);
+        const labelWidth = Math.min(replayOverlayEl.width - x1 - 4, metrics.width + 16);
+        const labelY = Math.max(0, y1 - 24);
+        replayOverlayCtx.fillRect(x1, labelY, labelWidth, 22);
+        replayOverlayCtx.strokeRect(x1, labelY, labelWidth, 22);
+        replayOverlayCtx.fillStyle = "#ecfeff";
+        replayOverlayCtx.fillText(label, x1 + 8, labelY + 4);
+      });
+      replayOverlayCtx.restore();
+    }
+
+    async function refreshDetectionOverlay(force = false) {
+      if (!replayInfo?.video_found || !replayPlayerEl.duration) {
+        clearOverlay();
+        return;
+      }
+      const now = Date.now();
+      if (!force && now - lastOverlayFetchAt < OVERLAY_FETCH_INTERVAL_MS) {
+        if (latestOverlayPayload) drawOverlay(latestOverlayPayload);
+        return;
+      }
+      lastOverlayFetchAt = now;
+      const seq = ++overlayRequestSeq;
+      const sourceOffset = currentPlaybackBaseOffset + Number(replayPlayerEl.currentTime || 0);
+      const url = `${API_BASE}/replay/detections?camera_id=${encodeURIComponent(cameraId)}&timestamp=${encodeURIComponent(timestamp)}&scene_id=${encodeURIComponent(sceneId)}&rule_id=${encodeURIComponent(ruleId)}&offset=${encodeURIComponent(sourceOffset.toFixed(3))}`;
+      try {
+        const res = await fetch(url);
+        const payload = await res.json().catch(() => ({}));
+        if (!res.ok || seq !== overlayRequestSeq) return;
+        latestOverlayPayload = payload;
+        drawOverlay(payload);
+      } catch {
+        clearOverlay();
+      }
+    }
+
+    function renderFiles(files) {
+      fileListEl.innerHTML = "";
+      if (!files.length) {
+        fileListEl.innerHTML = `<div class="empty">当前目录没有可回看的文件。</div>`;
+        return;
+      }
+
+      const header = document.createElement("div");
+      header.className = "file-row header";
+      header.innerHTML = `<span>文件名</span><span>大小</span><span>修改时间</span><span>操作</span>`;
+      fileListEl.appendChild(header);
+
+      let firstPlayable = "";
+      files.forEach((file) => {
+        const row = document.createElement("div");
+        row.className = "file-row";
+        const downloadUrl = `${API_BASE}/replay/download?camera_id=${encodeURIComponent(cameraId)}&timestamp=${encodeURIComponent(timestamp)}&scene_id=${encodeURIComponent(sceneId)}&rule_id=${encodeURIComponent(ruleId)}&name=${encodeURIComponent(file.name)}`;
+        if (!firstPlayable && file.name.match(/\.(mp4|avi|mov|mkv|webm)$/i)) {
+          firstPlayable = downloadUrl;
+        }
+        row.innerHTML = `
+          <span>${file.name}</span>
+          <span>${formatBytes(file.size)}</span>
+          <span>${formatBrowserDateTime(file.modified_at)}</span>
+          <span class="file-actions">
+            <button class="mini-btn play-btn" type="button">播放</button>
+            <a class="mini-btn file-name" href="${downloadUrl}" target="_blank" rel="noopener noreferrer">下载/查看</a>
+          </span>
+        `;
+        row.querySelector(".play-btn").addEventListener("click", () => {
+          playVideo(downloadUrl, 0);
+          playerTipEl.textContent = `正在播放: ${file.name}`;
+        });
+        fileListEl.appendChild(row);
+      });
+
+      if (firstPlayable && !replayPlayerEl.src) {
+        playVideo(firstPlayable, 0);
+        playerTipEl.textContent = "已自动加载首个录像文件，可点击播放。";
+      }
+    }
+
+    function renderAnalysis(data) {
+      replayAnalysis = data || null;
+      if (!data) {
+        analysisPanelEl.style.display = "none";
+        analysisEmptyEl.style.display = "block";
+        analysisSummaryEl.textContent = "-";
+        analysisMetaEl.textContent = "";
+        analysisGridEl.innerHTML = "";
+        return;
+      }
+
+      analysisPanelEl.style.display = "block";
+      analysisEmptyEl.style.display = "none";
+      analysisSummaryEl.textContent = data.summary || "已完成视频分析，但未返回摘要。";
+      analysisMetaEl.textContent = `模型：${data.model || "-"} · 更新时间：${formatBrowserDateTime(data.updated_at || data.created_at)}${data.risk_assessment ? ` · 风险：${data.risk_assessment}` : ""}`;
+
+      const payload = data.analysis || {};
+      const observations = Array.isArray(payload.observations) ? payload.observations : [];
+      const events = Array.isArray(payload.events) ? payload.events : [];
+      const actions = Array.isArray(payload.recommended_actions) ? payload.recommended_actions : [];
+      const cards = [];
+
+      if (observations.length) {
+        cards.push(`
+          <div class="analysis-card">
+            <strong>关键观察</strong>
+            <ul>${observations.map((item) => `<li>${escapeHtml(item)}</li>`).join("")}</ul>
+          </div>
+        `);
+      }
+      if (events.length) {
+        cards.push(`
+          <div class="analysis-card">
+            <strong>事件拆解</strong>
+            <ul>${events.slice(0, 5).map((event) => {
+              const title = escapeHtml(event?.title || "事件");
+              const desc = escapeHtml(event?.description || "");
+              const offset = event?.time_offset_sec;
+              return `<li>${offset !== undefined ? `t+${offset}s ` : ""}${title}${desc ? `：${desc}` : ""}</li>`;
+            }).join("")}</ul>
+          </div>
+        `);
+      }
+      if (actions.length) {
+        cards.push(`
+          <div class="analysis-card">
+            <strong>处置建议</strong>
+            <ul>${actions.map((item) => `<li>${escapeHtml(item)}</li>`).join("")}</ul>
+          </div>
+        `);
+      }
+      if (data.error) {
+        cards.push(`
+          <div class="analysis-card">
+            <strong>错误信息</strong>
+            <ul><li>${escapeHtml(data.error)}</li></ul>
+          </div>
+        `);
+      }
+
+      analysisGridEl.innerHTML = cards.join("") || '<div class="analysis-card"><strong>提示</strong><ul><li>当前分析结果没有结构化细项。</li></ul></div>';
+    }
+
+    function playVideo(url, baseOffset = 0) {
+      replayPlayerEl.src = url;
+      currentPlaybackBaseOffset = Math.max(0, Number(baseOffset || 0));
+      latestOverlayPayload = null;
+      lastOverlayFetchAt = 0;
+      clearOverlay();
+      replayPlayerEl.load();
+      timelineContainer.style.display = "block";
+    }
+
+    function updateTimeline() {
+      if (!replayPlayerEl.duration) return;
+      const progress = (replayPlayerEl.currentTime / replayPlayerEl.duration) * 100;
+      timelinePlayedEl.style.width = `${progress}%`;
+      timeEndEl.textContent = formatSeconds(replayPlayerEl.duration);
+    }
+
+    function updateEventMarker() {
+      if (!replayPlayerEl.duration || eventPosition <= 0) return;
+      const position = (eventPosition / replayPlayerEl.duration) * 100;
+      timelineEventEl.style.left = `${position}%`;
+      timelineEventEl.style.display = "block";
+    }
+
+    async function loadReplayDirectory() {
+      cameraEl.textContent = cameraId || "-";
+      sceneEl.textContent = sceneId || "-";
+      ruleEl.textContent = ruleId || "-";
+      tsEl.textContent = formatBrowserDateTime(timestamp);
+
+      if (!cameraId || !timestamp) {
+        setStatusTone("缺少参数 camera_id 或 timestamp", "error");
+        fileListEl.innerHTML = `<div class="empty">缺少必要参数，无法定位回看目录。</div>`;
+        return;
+      }
+
+      try {
+        const res = await fetch(`${API_BASE}/replay/resolve?camera_id=${encodeURIComponent(cameraId)}&timestamp=${encodeURIComponent(timestamp)}&scene_id=${encodeURIComponent(sceneId)}&rule_id=${encodeURIComponent(ruleId)}`);
+        const data = await res.json();
+        if (!res.ok) throw new Error(data.detail || "resolve failed");
+
+        replayDir = data.replay_dir || "";
+        dirEl.textContent = replayDir || "-";
+        setStatusTone(
+          data.replay_dir_exists ? `目录存在，文件数：${data.file_count}` : "目录不存在（录像可能尚未产出）",
+          data.replay_dir_exists ? "success" : "warning"
+        );
+
+        if (data.open_uri) {
+          openFolderEl.href = data.open_uri;
+          openFolderEl.style.pointerEvents = "auto";
+          openFolderEl.style.opacity = "1";
+          if (autoOpenFolder) {
+            setTimeout(() => {
+              try {
+                window.location.href = data.open_uri;
+              } catch (error) {
+                console.warn("自动打开目录失败", error);
+              }
+            }, 200);
+          }
+        } else {
+          openFolderEl.href = "#";
+          openFolderEl.style.pointerEvents = "none";
+          openFolderEl.style.opacity = "0.5";
+        }
+
+        renderFiles(Array.isArray(data.files) ? data.files : []);
+      } catch (error) {
+        setStatusTone("回看目录定位失败", "error");
+        fileListEl.innerHTML = `<div class="empty">${String(error?.message || error)}</div>`;
+      }
+    }
+
+    async function loadReplayInfo() {
+      if (!cameraId || !timestamp) {
+        showReplayToast("缺少必要参数：请从告警记录进入回放中心。", "error");
+        return;
+      }
+
+      refreshBtn.disabled = true;
+      refreshBtn.textContent = "加载中...";
+      try {
+        const res = await fetch(`${API_BASE}/replay/info?camera_id=${encodeURIComponent(cameraId)}&timestamp=${encodeURIComponent(timestamp)}&scene_id=${encodeURIComponent(sceneId)}&rule_id=${encodeURIComponent(ruleId)}`);
+        const data = await res.json();
+        if (!res.ok) throw new Error(data.detail || "获取回放信息失败");
+
+        replayInfo = data;
+        replayInfoEl.style.display = "block";
+        replayInfoEmptyEl.style.display = "none";
+        renderAnalysis(data.video_analysis || null);
+        if (data.rule_label) {
+          ruleEl.textContent = `${data.rule_label} (${ruleId || "-"})`;
+        }
+
+        const foundName = data.video_name || (data.video_path ? data.video_path.split(/[\\/]/).pop() : "未找到");
+        foundVideoEl.textContent = foundName || "未找到";
+        foundVideoEl.className = data.video_found ? "meta-value success" : "meta-value error";
+        videoDurationEl.textContent = data.video_duration ? formatSeconds(data.video_duration) : "-";
+        eventOffsetEl.textContent = typeof data.play_offset === "number" ? `${formatSeconds(data.play_offset)} (${data.play_offset.toFixed(2)}秒)` : "-";
+        suggestedStartEl.textContent = typeof data.suggested_start === "number" ? `${formatSeconds(data.suggested_start)} (${data.suggested_start.toFixed(2)}秒)` : "-";
+        sourceWarningEl.textContent = data.source_warning || "-";
+        sourceOriginEl.textContent = data.source_origin || "-";
+        sourceOriginEl.className = `meta-value ${data.source_quality === "high" ? "success" : data.source_quality === "medium" ? "warning" : "error"}`;
+        clipCapabilityEl.textContent = data.clip_generation_message || "-";
+        clipCapabilityEl.className = `meta-value ${data.clip_generation_supported ? "success" : "warning"}`;
+
+        generateClipBtn.disabled = !data.video_found || !data.clip_generation_supported;
+        generateClipBtn.textContent = data.clip_generation_supported ? "生成回放片段" : "生成回放片段（需 ffmpeg）";
+        analyzeReplayBtn.disabled = !data.video_found;
+        analyzeReplayBtn.textContent = data.video_analysis ? "重新分析短视频" : "分析短视频";
+        if (data.video_found) {
+            setStatusTone("已定位到可回放视频", "success");
+            if (!data.clip_generation_supported) {
+              playerTipEl.textContent = "当前未安装 ffmpeg，不能裁剪事件片段；但你仍然可以点击“分析短视频”，系统会直接分析原始回放视频。";
+            } else if (data.source_origin === "legacy_demo_disabled") {
+              playerTipEl.textContent = "当前命中的是演示兜底视频，不一定对应真实事件时刻，分析结果仅供演示参考。";
+            }
+        } else {
+            setStatusTone("未找到匹配录像，可先查看目录文件", "warning");
+        }
+
+        if (data.video_found && data.video_name) {
+          const downloadUrl = `${API_BASE}/replay/download?camera_id=${encodeURIComponent(cameraId)}&timestamp=${encodeURIComponent(timestamp)}&scene_id=${encodeURIComponent(sceneId)}&rule_id=${encodeURIComponent(ruleId)}&name=${encodeURIComponent(data.video_name)}`;
+          if (!replayPlayerEl.src || replayPlayerEl.src !== downloadUrl) {
+            playVideo(downloadUrl, 0);
+          }
+          playerTipEl.textContent = "已定位到事件录像，红色标记表示事件发生点。";
+          eventPosition = Number(data.play_offset || 0);
+        } else {
+          eventPosition = 0;
+          timelineEventEl.style.display = "none";
+        }
+      } catch (error) {
+        replayInfo = null;
+        replayInfoEl.style.display = "none";
+        replayInfoEmptyEl.style.display = "block";
+        replayInfoEmptyEl.textContent = `获取回放信息失败: ${String(error?.message || error)}`;
+        generateClipBtn.disabled = true;
+        analyzeReplayBtn.disabled = true;
+        renderAnalysis(null);
+      } finally {
+        refreshBtn.disabled = false;
+        refreshBtn.textContent = "刷新回放信息";
+      }
+    }
+
+    async function analyzeReplay(force = false) {
+      if (!cameraId || !timestamp) {
+        showReplayToast("缺少必要参数：请从告警记录进入回放中心。", "error");
+        return;
+      }
+      analyzeReplayBtn.disabled = true;
+      analyzeReplayBtn.textContent = force ? "重新分析中..." : "分析中...";
+      try {
+        const before = DEFAULT_CLIP_BEFORE;
+        const after = DEFAULT_CLIP_AFTER;
+        const url = `${API_BASE}/replay/analyze?camera_id=${encodeURIComponent(cameraId)}&timestamp=${encodeURIComponent(timestamp)}&scene_id=${encodeURIComponent(sceneId)}&rule_id=${encodeURIComponent(ruleId)}&before=${before}&after=${after}&force=${force ? "true" : "false"}`;
+        const res = await fetch(url);
+        const payload = await res.json().catch(() => ({}));
+        if (!res.ok) {
+          throw new Error(payload.detail || "视频分析失败");
+        }
+        renderAnalysis(payload.data || null);
+        if (payload.analysis_target_kind === "source_video") {
+          playerTipEl.textContent = "当前未成功裁出短片段，MiMo 已直接分析原始回放视频。若要更精准裁片，请安装 ffmpeg。";
+        }
+        await loadReplayInfo();
+      } catch (error) {
+        showReplayToast(`视频分析失败：${String(error?.message || error)}`, "error");
+      } finally {
+        analyzeReplayBtn.disabled = !replayInfo?.video_found;
+        analyzeReplayBtn.textContent = replayAnalysis ? "重新分析短视频" : "分析短视频";
+      }
+    }
+
+    async function generateClip() {
+      if (!cameraId || !timestamp) {
+        showReplayToast("缺少必要参数：请从告警记录进入回放中心。", "error");
+        return;
+      }
+
+      const before = DEFAULT_CLIP_BEFORE;
+      const after = DEFAULT_CLIP_AFTER;
+
+      generateClipBtn.disabled = true;
+      generateClipBtn.textContent = "生成中...";
+      clipProgressEl.style.display = "block";
+      clipPercentEl.textContent = "0%";
+      clipProgressFillEl.style.width = "0%";
+
+      const progressInterval = setInterval(() => {
+        const currentWidth = parseFloat(clipProgressFillEl.style.width) || 0;
+        if (currentWidth < 90) {
+          const next = currentWidth + 5;
+          clipProgressFillEl.style.width = `${next}%`;
+          clipPercentEl.textContent = `${Math.floor(next)}%`;
+        }
+      }, 200);
+
+      try {
+        const url = `${API_BASE}/replay/clip?camera_id=${encodeURIComponent(cameraId)}&timestamp=${encodeURIComponent(timestamp)}&scene_id=${encodeURIComponent(sceneId)}&rule_id=${encodeURIComponent(ruleId)}&before=${before}&after=${after}`;
+        const res = await fetch(url);
+        if (!res.ok) {
+          const data = await res.json().catch(() => ({}));
+          throw new Error(data.detail || "生成失败");
+        }
+        const blob = await res.blob();
+        const blobUrl = URL.createObjectURL(blob);
+        const clipBaseOffset = Math.max(0, Number(replayInfo?.play_offset || 0) - before);
+        playVideo(blobUrl, clipBaseOffset);
+        playerTipEl.textContent = `回放片段已生成（事件前${before}秒 + 事件后${after}秒），可直接播放或右键保存。`;
+      } catch (error) {
+        showReplayToast(`生成回放片段失败：${String(error?.message || error)}`, "error");
+      } finally {
+        clearInterval(progressInterval);
+        clipProgressFillEl.style.width = "100%";
+        clipPercentEl.textContent = "100%";
+        setTimeout(() => {
+          clipProgressEl.style.display = "none";
+          clipProgressFillEl.style.width = "0%";
+        }, 500);
+        generateClipBtn.disabled = !replayInfo?.video_found;
+        generateClipBtn.textContent = "生成回放片段";
+      }
+    }
+
+    replayPlayerEl.addEventListener("loadedmetadata", () => {
+      resizeOverlayCanvas();
+      updateTimeline();
+      timeStartEl.textContent = "00:00";
+      if (replayInfo?.play_offset) {
+        eventPosition = Math.max(0, Number(replayInfo.play_offset || 0) - currentPlaybackBaseOffset);
+        updateEventMarker();
+      } else {
+        timelineEventEl.style.display = "none";
+      }
+      refreshDetectionOverlay(true);
+    });
+
+    replayPlayerEl.addEventListener("timeupdate", () => {
+      updateTimeline();
+      refreshDetectionOverlay(false);
+    });
+    replayPlayerEl.addEventListener("seeked", () => refreshDetectionOverlay(true));
+    replayPlayerEl.addEventListener("pause", () => refreshDetectionOverlay(true));
+    window.addEventListener("resize", () => {
+      resizeOverlayCanvas();
+      if (latestOverlayPayload) drawOverlay(latestOverlayPayload);
+    });
+    timelineEventEl.addEventListener("click", () => {
+      if (eventPosition > 0 && replayPlayerEl.duration) {
+        replayPlayerEl.currentTime = eventPosition;
+        replayPlayerEl.play().catch(() => {});
+      }
+    });
+
+    copyBtn.addEventListener("click", async () => {
+      if (!replayDir) return;
+      try {
+        await navigator.clipboard.writeText(replayDir);
+        copyBtn.textContent = "已复制目录路径";
+        setTimeout(() => { copyBtn.textContent = "复制目录路径"; }, 1200);
+      } catch {
+        copyBtn.textContent = "复制失败";
+        setTimeout(() => { copyBtn.textContent = "复制目录路径"; }, 1200);
+      }
+    });
+
+    refreshBtn.addEventListener("click", async () => {
+      await loadReplayDirectory();
+      await loadReplayInfo();
+    });
+    analyzeReplayBtn.addEventListener("click", () => analyzeReplay(!!replayAnalysis));
+    generateClipBtn.addEventListener("click", generateClip);
+
+    (async () => {
+      await loadReplayDirectory();
+      if (cameraId && timestamp) {
+        await loadReplayInfo();
+      }
+    })();
+  </script>
+</body>
+</html>

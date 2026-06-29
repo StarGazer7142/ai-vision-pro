@@ -1,0 +1,8 @@
+task mode: create
+primary deck-profile: engineering-platform
+secondary profile gates: product-platform, strategy-leadership
+required proof objects: architecture map, workflow map, product capability proof, metric evidence, reliability/deployment roadmap
+source requirements: use D:\Project\AI_PPT生成文字稿.md as the content source and preserve the 15-slide outline
+asset requirements: no external brand marks or invented logos; use editable shapes, native text, and simple system diagrams
+QA gates: 16:9 1280x720 canvas, dark security control-room visual system, readable Chinese text, distinct slide rhythms, no decorative filler
+known missing inputs: no real annotated visual dataset metrics are available; accuracy slide must clearly distinguish tested rule-engine accuracy from future model Precision/Recall work
